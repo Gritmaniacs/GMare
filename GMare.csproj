@@ -55,6 +55,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PyxTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libs\PyxTools.dll</HintPath>
@@ -328,45 +332,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SharpZipLib\Checksums\Adler32.cs" />
-    <Compile Include="SharpZipLib\Checksums\CRC32.cs" />
-    <Compile Include="SharpZipLib\Checksums\IChecksum.cs" />
-    <Compile Include="SharpZipLib\Checksums\StrangeCRC.cs" />
-    <Compile Include="SharpZipLib\Core\FileSystemScanner.cs" />
-    <Compile Include="SharpZipLib\Core\INameTransform.cs" />
-    <Compile Include="SharpZipLib\Core\IScanFilter.cs" />
-    <Compile Include="SharpZipLib\Core\NameFilter.cs" />
-    <Compile Include="SharpZipLib\Core\PathFilter.cs" />
-    <Compile Include="SharpZipLib\Core\StreamUtils.cs" />
-    <Compile Include="SharpZipLib\Core\WindowsPathUtils.cs" />
-    <Compile Include="SharpZipLib\Encryption\PkzipClassic.cs" />
-    <Compile Include="SharpZipLib\SharpZipBaseException.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Deflater.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\DeflaterConstants.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\DeflaterEngine.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\DeflaterHuffman.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\DeflaterPending.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Inflater.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\InflaterDynHeader.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\InflaterHuffmanTree.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\PendingBuffer.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Streams\OutputWindow.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
-    <Compile Include="SharpZipLib\Zip\FastZip.cs" />
-    <Compile Include="SharpZipLib\Zip\IEntryFactory.cs" />
-    <Compile Include="SharpZipLib\Zip\WindowsNameTransform.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipConstants.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipEntry.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipEntryFactory.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipException.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipExtraData.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipFile.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipHelperStream.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipInputStream.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipNameTransform.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipOutputStream.cs" />
     <EmbeddedResource Include="AutoUpdater\DownloadUpdateDialog.resx">
       <DependentUpon>DownloadUpdateDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -472,6 +437,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -481,66 +447,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="SharpZipLib\.svn\all-wcprops" />
-    <None Include="SharpZipLib\.svn\entries" />
-    <None Include="SharpZipLib\.svn\prop-base\ZipLib.pidb.svn-base" />
-    <None Include="SharpZipLib\.svn\text-base\SharpZipBaseException.cs.svn-base" />
-    <None Include="SharpZipLib\.svn\text-base\ZipLib.pidb.svn-base" />
-    <None Include="SharpZipLib\ZipLib.pidb" />
-    <None Include="SharpZipLib\Zip\.svn\all-wcprops" />
-    <None Include="SharpZipLib\Zip\.svn\entries" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\FastZip.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\IEntryFactory.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\WindowsNameTransform.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\ZipConstants.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\ZipEntry.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\ZipEntryFactory.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\ZipException.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\ZipExtraData.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\ZipFile.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\ZipHelperStream.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\ZipInputStream.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\ZipNameTransform.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\.svn\text-base\ZipOutputStream.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\all-wcprops" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\entries" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\text-base\Deflater.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\text-base\DeflaterConstants.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\text-base\DeflaterEngine.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\text-base\DeflaterHuffman.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\text-base\DeflaterPending.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\text-base\Inflater.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\text-base\InflaterDynHeader.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\text-base\InflaterHuffmanTree.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\.svn\text-base\PendingBuffer.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\Streams\.svn\all-wcprops" />
-    <None Include="SharpZipLib\Zip\Compression\Streams\.svn\entries" />
-    <None Include="SharpZipLib\Zip\Compression\Streams\.svn\text-base\DeflaterOutputStream.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\Streams\.svn\text-base\InflaterInputStream.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\Streams\.svn\text-base\OutputWindow.cs.svn-base" />
-    <None Include="SharpZipLib\Zip\Compression\Streams\.svn\text-base\StreamManipulator.cs.svn-base" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SharpZipLib\.svn\props\" />
-    <Folder Include="SharpZipLib\.svn\tmp\prop-base\" />
-    <Folder Include="SharpZipLib\.svn\tmp\props\" />
-    <Folder Include="SharpZipLib\.svn\tmp\text-base\" />
-    <Folder Include="SharpZipLib\Zip\.svn\prop-base\" />
-    <Folder Include="SharpZipLib\Zip\.svn\props\" />
-    <Folder Include="SharpZipLib\Zip\.svn\tmp\prop-base\" />
-    <Folder Include="SharpZipLib\Zip\.svn\tmp\props\" />
-    <Folder Include="SharpZipLib\Zip\.svn\tmp\text-base\" />
-    <Folder Include="SharpZipLib\Zip\Compression\.svn\prop-base\" />
-    <Folder Include="SharpZipLib\Zip\Compression\.svn\props\" />
-    <Folder Include="SharpZipLib\Zip\Compression\.svn\tmp\prop-base\" />
-    <Folder Include="SharpZipLib\Zip\Compression\.svn\tmp\props\" />
-    <Folder Include="SharpZipLib\Zip\Compression\.svn\tmp\text-base\" />
-    <Folder Include="SharpZipLib\Zip\Compression\Streams\.svn\prop-base\" />
-    <Folder Include="SharpZipLib\Zip\Compression\Streams\.svn\props\" />
-    <Folder Include="SharpZipLib\Zip\Compression\Streams\.svn\tmp\prop-base\" />
-    <Folder Include="SharpZipLib\Zip\Compression\Streams\.svn\tmp\props\" />
-    <Folder Include="SharpZipLib\Zip\Compression\Streams\.svn\tmp\text-base\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Resources\tick-circle-frame.png" />
   </ItemGroup>
