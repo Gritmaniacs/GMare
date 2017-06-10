@@ -83,68 +83,12 @@ namespace GameMaker.Project
                 // Write version.
                 WriteInt((int)version);
 
-                // Convert for GM 8.1.
-                if (version == GMVersionType.GameMaker81)
-                {
-                    version = GMVersionType.GameMaker80;
-                    dontConvert = true;
-                }
-
                 // Write reserved bytes.
                 if ((int)version < 600)
                     WriteEmpty(4);
 
-                // If target version is GM7, start Game Maker 7 project file encryption.
-                if (version == GMVersionType.GameMaker70)
-                {
-                    // Create random numbers.
-                    Random rand = new Random();
-
-                    byte[] bytes = null;
-
-                    // Get game id bytes. The first byte is not encrypted.
-                    byte[] id = BitConverter.GetBytes(project.Settings.GameIdentifier);
-
-                    // Bill and Fred, psssttt they like each other ;).
-                    int bill = rand.Next() % 3000 + 123;
-                    int fred = rand.Next() % 3000 + 231;
-
-                    // Write trash and treasure.
-                    WriteInt(bill);
-                    WriteInt(fred);
-
-                    // Write junk integers.
-                    while (bill-- > 0)
-                    {
-                        bytes = BitConverter.GetBytes((rand.Next() % 3000));
-                        _writer.Write(bytes, 0, bytes.Length);
-                    }
-
-                    // Set the seed and swap table.
-                    int seed = rand.Next() % 25600 + 3328;
-                    bytes = BitConverter.GetBytes(seed);
-                    _writer.Write(bytes, 0, bytes.Length);
-
-                    // Write junk integers.
-                    while (fred-- > 0)
-                    {
-                        bytes = BitConverter.GetBytes((rand.Next() % 3000));
-                        _writer.Write(bytes, 0, bytes.Length);
-                    }
-
-                    // Write first byte of game id (Not encrypted).
-                    WriteByte(id[0]);
-
-                    // Set the seed for encryption.
-                    SetSeed(seed);
-
-                    // Write rest of game id bytes, encrypted.
-                    WriteByte(id[1]);
-                    WriteByte(id[2]);
-                    WriteByte(id[3]);
-                }
-                else  // Write game id.
-                    WriteInt(project.Settings.GameIdentifier);
+                // Write game id.
+                WriteInt(project.Settings.GameIdentifier);
 
                 // Write empty bytes.
                 WriteEmpty(16);
@@ -155,13 +99,9 @@ namespace GameMaker.Project
                 // Write project objects.
                 WriteSettings(project.Settings, version);
 
-                // If the version is greater than 7.0.
-                if (version > GMVersionType.GameMaker70)
-                {
-                    // Read triggers and constants.
-                    WriteTriggers(project.Triggers, version);
-                    WriteConstants(project.Settings.Constants, version);
-                }
+                // Read triggers and constants.
+                WriteTriggers(project.Triggers, version);
+                WriteConstants(project.Settings.Constants, version);
 
                 // Progress event.
                 ProgressChanged("Writing Sounds...");
@@ -189,8 +129,7 @@ namespace GameMaker.Project
 
                 // Progress event.
                 ProgressChanged("Writing Fonts...");
-                WriteFonts(project.Fonts, version = dontConvert == true ? GMVersionType.GameMaker81 : version);
-                version = version == GMVersionType.GameMaker81 ? GMVersionType.GameMaker80 : version;
+                WriteFonts(project.Fonts, version);
 
                 // Progress event.
                 ProgressChanged("Writing Timelines...");
@@ -209,48 +148,28 @@ namespace GameMaker.Project
                 WriteInt(project.LastTileId);
 
                 // Write version.
-                if (version < GMVersionType.GameMaker60)
-                    WriteInt(430);
-                else if (version == GMVersionType.GameMaker60)
-                    WriteInt(600);
-                else if (version == GMVersionType.GameMaker70)
-                    WriteInt(620);
-                else if (version >= GMVersionType.GameMaker80)
-                    WriteInt(800);
+                WriteInt(800);
 
-                // Check version.
-                if (version < GMVersionType.GameMaker70)
-                {
-                    // Progress event.
-                    ProgressChanged("Writing Game Information...");
-                    WriteGameInformation(project.GameInformation, version);
-                }
-                else
-                {
-                    // Progress event.
-                    ProgressChanged("Writing Includes...");
+                // Progress event.
+                ProgressChanged("Writing Includes...");
 
-                    // Write includes.
-                    WriteIncludes(project.Settings.Includes, version);
+                // Write includes.
+                WriteIncludes(project.Settings.Includes, version);
 
-                    // Progress event.
-                    ProgressChanged("Writing Packages...");
+                // Progress event.
+                ProgressChanged("Writing Packages...");
 
-                    // Write packages.
-                    WritePackages(project.Packages.ToArray(), version);
+                // Write packages.
+                WritePackages(project.Packages.ToArray(), version);
 
-                    // Write version.
-                    if (version == GMVersionType.GameMaker70)
-                        WriteInt(600);
-                    else if (version >= GMVersionType.GameMaker80)
-                        WriteInt(800);
+                // Write version.
+                WriteInt(800);
 
-                    // Progress event.
-                    ProgressChanged("Writing Game Information...");
+                // Progress event.
+                ProgressChanged("Writing Game Information...");
 
-                    // Write game information.
-                    WriteGameInformation(project.GameInformation, version);
-                }
+                // Write game information.
+                WriteGameInformation(project.GameInformation, version);
 
                 // Write version.
                 WriteInt(500);
@@ -294,76 +213,38 @@ namespace GameMaker.Project
         /// <param name="version">Target Game Maker file version to write.</param>
         private void WriteSettings(GMSettings settings, GMVersionType version)
         {
-            // Write version number.
-            if (version != GMVersionType.GameMaker70)
-                WriteInt((int)version);
-            else
-                WriteInt(702);
-
-            // If version is GM8, start compressing.
-            if (version == GMVersionType.GameMaker80)
-                Compress();
+            WriteInt((int)version);
 
             // Write settings data
             WriteBool(settings.StartFullscreen);
 
             // Versions greater than 5.3 support interpolation.
-            if (version > GMVersionType.GameMaker53)
-                WriteBool(settings.Interpolate);
+            WriteBool(settings.Interpolate);
 
             // Write settings data.
             WriteBool(settings.DontDrawBorder);
             WriteBool(settings.DisplayCursor);
 
-            // Versions greater than 5.3 support the below variables.
-            if (version > GMVersionType.GameMaker53)
-            {
-                // Write settings data.
-                WriteInt(settings.Scaling);
-                WriteBool(settings.AllowWindowResize);
-                WriteBool(settings.AlwaysOnTop);
-                WriteInt(settings.ColorOutsideRoom);
-            }
-            else
-            {
-                // Write settings data.
-                WriteInt(settings.ScaleInWindowedMode);
-                WriteInt(settings.ScaleInFullScreenMode);
-                WriteBool(settings.ScaleOnHardwareSupport);
-            }
+            // Write settings data.
+            WriteInt(settings.Scaling);
+            WriteBool(settings.AllowWindowResize);
+            WriteBool(settings.AlwaysOnTop);
+            WriteInt(settings.ColorOutsideRoom);
 
             // Write settings data.
             WriteBool(settings.SetResolution);
 
-            // Versions greater than 5.3 support the below variables.
-            if (version > GMVersionType.GameMaker53)
-            {
-                // Write settings data.
-                WriteInt((int)settings.ColorDepth2);
-                WriteInt((int)settings.Resolution2);
-                WriteInt((int)settings.Frequency2);
-            }
-            else
-            {
-                // Write settings data.
-                WriteInt((int)settings.ColorDepth1);
-                WriteBool(settings.UseExclusiveGraphicsMode);
-                WriteInt((int)settings.Resolution1);
-                WriteInt((int)settings.Frequency1);
-                WriteBool(settings.UseSynchronization);
-                WriteBool(settings.DisplayCaptionInFullScreenMode);
-            }
+            // Write settings data.
+            WriteInt((int)settings.ColorDepth2);
+            WriteInt((int)settings.Resolution2);
+            WriteInt((int)settings.Frequency2);
 
             // Write settings data.
             WriteBool(settings.DontShowButtons);
 
-            // Versions greater than 5.3 support screen synchronization.
-            if (version > GMVersionType.GameMaker53)
-                WriteBool(settings.UseSynchronization);
+            WriteBool(settings.UseSynchronization);
 
-            // Versions greater than 7.0 support disabling the screensaver, and power saving options.
-            if (version > GMVersionType.GameMaker70)
-                WriteBool(settings.DisableScreensaver);
+            WriteBool(settings.DisableScreensaver);
 
             // Write settings.
             WriteBool(settings.LetF4SwitchFullscreen);
@@ -371,21 +252,11 @@ namespace GameMaker.Project
             WriteBool(settings.LetEscEndGame);
             WriteBool(settings.LetF5SaveF6Load);
 
-            // Write empty bytes.
-            if (version < GMVersionType.GameMaker60)
-                WriteEmpty(8);
+            // Write settings data.
+            WriteBool(settings.LetF9TakeScreenShot);
+            WriteBool(settings.TreatCloseButtonAsESC);
 
-            // Versions greater than 6.0, treat close as esc, F9 screenshot.
-            if (version > GMVersionType.GameMaker60)
-            {
-                // Write settings data.
-                WriteBool(settings.LetF9TakeScreenShot);
-                WriteBool(settings.TreatCloseButtonAsESC);
-            }
-
-            // Versions greater than 5.1 support game priority.
-            if (version > GMVersionType.GameMaker51)
-                WriteInt((int)settings.GamePriority);
+            WriteInt((int)settings.GamePriority);
 
             // Write settings data.
             WriteBool(settings.FreezeOnLoseFocus);
@@ -394,71 +265,35 @@ namespace GameMaker.Project
             // If the loadbar type is a custom loadbar.
             if (settings.LoadBarMode == LoadProgressBarType.Custom)
             {
-                // If version greater than 7.0.
-                if (version > GMVersionType.GameMaker70)
+                // If a back loadbar image exists.
+                if (settings.BackLoadBarImage != null)
                 {
-                    // If a back loadbar image exists.
-                    if (settings.BackLoadBarImage != null)
-                    {
-                        // Write that there is a back load bar image.
-                        WriteBool(true);
+                    // Write that there is a back load bar image.
+                    WriteBool(true);
 
-                        // Write size of image data.
-                        WriteInt(settings.BackLoadBarImage.Length);
+                    // Write size of image data.
+                    WriteInt(settings.BackLoadBarImage.Length);
 
-                        // Write back loadbar image data.
-                        WriteBytes(settings.BackLoadBarImage);
-                    }
-                    else  // No back load bar image.
-                        WriteBool(false);
-
-                    // If a front loadbar image exists.
-                    if (settings.FrontLoadBarImage != null)
-                    {
-                        // Write that there is a front load bar image.
-                        WriteBool(true);
-
-                        // Write size of image data.
-                        WriteInt(settings.FrontLoadBarImage.Length);
-
-                        // Write front loadbar image data.
-                        WriteBytes(settings.FrontLoadBarImage);
-                    }
-                    else  // No front load bar image.
-                        WriteBool(false);
+                    // Write back loadbar image data.
+                    WriteBytes(settings.BackLoadBarImage);
                 }
-                else
+                else  // No back load bar image.
+                    WriteBool(false);
+
+                // If a front loadbar image exists.
+                if (settings.FrontLoadBarImage != null)
                 {
-                    // If a back loadbar image exists.
-                    if (settings.BackLoadBarImage != null)
-                    {
-                        // Write that there is a back load bar image.
-                        WriteInt(10);
+                    // Write that there is a front load bar image.
+                    WriteBool(true);
 
-                        // Write size of image data.
-                        WriteInt(settings.BackLoadBarImage.Length);
+                    // Write size of image data.
+                    WriteInt(settings.FrontLoadBarImage.Length);
 
-                        // Write back loadbar image data.
-                        WriteBytes(settings.BackLoadBarImage);
-                    }
-                    else  // No back load bar image.
-                        WriteInt(-1);
-
-                    // If a front loadbar image exists.
-                    if (settings.FrontLoadBarImage != null)
-                    {
-                        // Write that there is a front load bar image.
-                        WriteInt(10);
-
-                        // Write size of image data.
-                        WriteInt(settings.FrontLoadBarImage.Length);
-
-                        // Write front loadbar image data.
-                        WriteBytes(settings.FrontLoadBarImage);
-                    }
-                    else  // No front load bar image.
-                        WriteInt(-1);
+                    // Write front loadbar image data.
+                    WriteBytes(settings.FrontLoadBarImage);
                 }
+                else  // No front load bar image.
+                    WriteBool(false);
             }
 
             // Write settings data.
@@ -467,51 +302,26 @@ namespace GameMaker.Project
             // If a custom load image must be shown.
             if (settings.ShowCustomLoadImage == true)
             {
-                // If version is greater than 7.0.
-                if (version > GMVersionType.GameMaker70)
+                // If a custom load image is present
+                if (settings.LoadingImage != null)
                 {
-                    // If a custom load image is present
-                    if (settings.LoadingImage != null)
-                    {
-                        // Write that there is a custom load image.
-                        WriteBool(true);
+                    // Write that there is a custom load image.
+                    WriteBool(true);
 
-                        // Write size of image data.
-                        WriteInt(settings.LoadingImage.Length);
+                    // Write size of image data.
+                    WriteInt(settings.LoadingImage.Length);
 
-                        // Write custom load image data
-                        WriteBytes(settings.LoadingImage);
-                    }
-                    else  // No custom load image.
-                        WriteBool(false);
+                    // Write custom load image data
+                    WriteBytes(settings.LoadingImage);
                 }
-                else
-                {
-                    // If a custom load image is present
-                    if (settings.LoadingImage != null)
-                    {
-                        // Write that there is a custom load image.
-                        WriteInt(10);
-
-                        // Write size of image data.
-                        WriteInt(settings.LoadingImage.Length);
-
-                        // Write custom load image data
-                        WriteBytes(settings.LoadingImage);
-                    }
-                    else  // No custom load image.
-                        WriteInt(-1);
-                }
+                else  // No custom load image.
+                    WriteBool(false);
             }
 
-            // Versions greater than 5.0 support loading image alpha.
-            if (version > GMVersionType.GameMaker50)
-            {
-                // Write settings data.
-                WriteBool(settings.ImagePartiallyTransparent);
-                WriteInt(settings.LoadImageAlpha);
-                WriteBool(settings.ScaleProgressBar);
-            }
+            // Write settings data.
+            WriteBool(settings.ImagePartiallyTransparent);
+            WriteInt(settings.LoadImageAlpha);
+            WriteBool(settings.ScaleProgressBar);
 
             // Write size of icon image data.
             WriteInt(settings.GameIcon.Length);
@@ -524,77 +334,23 @@ namespace GameMaker.Project
             WriteBool(settings.TreatUninitializedAsZero);
             WriteString(settings.Author);
 
-            // Versions greater than 6.0 use a string for the version data.
-            if (version > GMVersionType.GameMaker60)
-                WriteString(settings.Version);
-            else
-                WriteInt(Convert.ToInt32(settings.Version));
+            WriteString(settings.Version);
 
             // Write settings data.
             WriteDouble(settings.ProjectLastChanged);
             WriteString(settings.Information);
 
-            // Versions greater than 5.2 support constants. Versions greater than 7.0 write constants elsewhere.
-            if (version > GMVersionType.GameMaker52 && version < GMVersionType.GameMaker80)
-            {
-                // If there are constants to write.
-                if (settings.Constants != null)
-                {
-                    // Write the amount of constants.
-                    WriteInt(settings.Constants.Length);
+            // Write build information.
+            WriteInt(settings.Major);
+            WriteInt(settings.Minor);
+            WriteInt(settings.Release);
+            WriteInt(settings.Build);
+            WriteString(settings.Company);
+            WriteString(settings.Product);
+            WriteString(settings.Copyright);
+            WriteString(settings.Description);
 
-                    // Iterate through constants.
-                    for (int i = 0; i < settings.Constants.Length; i++)
-                    {
-                        // Write constant data.
-                        WriteString(settings.Constants[i].Name);
-                        WriteString(settings.Constants[i].Value);
-                    }
-                }
-                else  // There are no constants to write.
-                    WriteInt(0);
-            }
-
-            // If version is greater than 6.0, write build data, else write includes.
-            if (version > GMVersionType.GameMaker60)
-            {
-                // Write build information.
-                WriteInt(settings.Major);
-                WriteInt(settings.Minor);
-                WriteInt(settings.Release);
-                WriteInt(settings.Build);
-                WriteString(settings.Company);
-                WriteString(settings.Product);
-                WriteString(settings.Copyright);
-                WriteString(settings.Description);
-
-                // If the version is greater than 7.0, write last time global settings were changed.
-                if (version > GMVersionType.GameMaker70)
-                    WriteDouble(settings.SettingsLastChanged);
-            }
-            else if (version > GMVersionType.GameMaker53)
-            {
-                // If there are include files to write.
-                if (settings.Includes != null)
-                {
-                    // Number of include files.
-                    WriteInt(settings.Includes.Length);
-
-                    // Iterate through include files.
-                    for (int i = 0; i < settings.Includes.Length; i++)
-                    {
-                        // Write include file data.
-                        WriteString(settings.Includes[i].FileName);
-                    }
-                }
-                else  // There are no includes to write.
-                    WriteInt(0);
-
-                // Write settings data.
-                WriteInt(settings.IncludeFolder);
-                WriteBool(settings.OverwriteExisting);
-                WriteBool(settings.RemoveAtGameEnd);
-            }
+            WriteDouble(settings.SettingsLastChanged);
 
             // Write compressed data.
             EndCompress();
@@ -622,7 +378,7 @@ namespace GameMaker.Project
                 Compress();
 
                 // Try to get the resource by the current id.
-                GMTrigger trigger = triggers.Find(delegate(GMTrigger t) { return t.Id == i; });
+                GMTrigger trigger = triggers.Find(delegate (GMTrigger t) { return t.Id == i; });
 
                 // If the sound with the current id does not exist, continue.
                 if (trigger == null)
@@ -691,10 +447,7 @@ namespace GameMaker.Project
         private void WriteSounds(GMList<GMSound> sounds, GMVersionType version)
         {
             // Write version number.
-            if (version < GMVersionType.GameMaker80)
-                WriteInt(400);
-            else
-                WriteInt(800);
+            WriteInt(800);
 
             // Write number of sound ids.
             WriteInt(sounds.LastId + 1);
@@ -702,12 +455,8 @@ namespace GameMaker.Project
             // Iterate through sound ids.
             for (int i = 0; i < sounds.LastId + 1; i++)
             {
-                // If version is 8.0, compress.
-                if (version == GMVersionType.GameMaker80)
-                    Compress();
-
                 // Try to get the resource by the current id.
-                GMSound sound = sounds.Find(delegate(GMSound s) { return s.Id == i; });
+                GMSound sound = sounds.Find(delegate (GMSound s) { return s.Id == i; });
 
                 // If the sound with the current id does not exist, continue.
                 if (sound == null)
@@ -723,68 +472,31 @@ namespace GameMaker.Project
                 // Write sound data.
                 WriteString(sound.Name);
 
-                // If version is 8.0, write last changed.
-                if (version == GMVersionType.GameMaker80)
-                    WriteDouble(sound.LastChanged);
-
-                // Write version number.
-                if (version < GMVersionType.GameMaker60)
-                {
-                    WriteInt(440);
-                    WriteInt((int)sound.Kind);
-                }
-                else if (version == GMVersionType.GameMaker80)
-                {
-                    WriteInt(800);
-                    WriteInt((int)sound.Type);
-                }
-                else
-                {
-                    WriteInt(600);
-                    WriteInt((int)sound.Type);
-                }   
+                WriteInt(800);
+                WriteInt((int)sound.Type);
 
                 // Write sound data.
                 WriteString(sound.FileType);
 
-                // Versions less than 6.0, have different sound data.
-                if (version < GMVersionType.GameMaker60)
-                {
-                    // If sound data exists, read it.
-                    if (sound.Kind != (int)SoundKind.None)
-                    {
-                        // Write sound data.
-                        WriteInt(sound.Data.Length);
-                        WriteBytes(sound.Data);
-                    }
+                // Write sound data.
+                WriteString(sound.FileName);
 
+                // If sound data exists, write it.
+                if (sound.Data != null)
+                {
                     // Write sound data.
-                    WriteBool(sound.AllowSoundEffects);
-                    WriteInt(sound.Buffers);
-                    WriteBool(sound.Preload);
+                    WriteBool(true);
+                    WriteInt(sound.Data.Length);
+                    WriteBytes(sound.Data);
                 }
                 else
-                {
-                    // Write sound data.
-                    WriteString(sound.FileName);
+                    WriteBool(false);
 
-                    // If sound data exists, write it.
-                    if (sound.Data != null)
-                    {
-                        // Write sound data.
-                        WriteBool(true);
-                        WriteInt(sound.Data.Length);
-                        WriteBytes(sound.Data);
-                    }
-                    else
-                        WriteBool(false);
-
-                    // Write sound data.
-                    WriteInt(sound.Effects);
-                    WriteDouble(sound.Volume);
-                    WriteDouble(sound.Pan);
-                    WriteBool(sound.Preload);
-                }
+                // Write sound data.
+                WriteInt(sound.Effects);
+                WriteDouble(sound.Volume);
+                WriteDouble(sound.Pan);
+                WriteBool(sound.Preload);
 
                 // End compression.
                 EndCompress();
@@ -800,11 +512,7 @@ namespace GameMaker.Project
         /// </summary>
         private void WriteSprites(GMList<GMSprite> sprites, GMVersionType version)
         {
-            // Write version number.
-            if (version < GMVersionType.GameMaker80)
-                WriteInt(400);
-            else
-                WriteInt(800);
+            WriteInt(800);
 
             // Write number of sprite ids.
             WriteInt(sprites.LastId + 1);
@@ -812,12 +520,8 @@ namespace GameMaker.Project
             // Iterate through sprites.
             for (int i = 0; i < sprites.LastId + 1; i++)
             {
-                // If version is 8.0, compress.
-                if (version == GMVersionType.GameMaker80)
-                    Compress();
-
                 // Try to get the resource by the current id.
-                GMSprite sprite = sprites.Find(delegate(GMSprite s) { return s.Id == i; });
+                GMSprite sprite = sprites.Find(delegate (GMSprite s) { return s.Id == i; });
 
                 // If the sprite with the current id does not exist, continue.
                 if (sprite == null)
@@ -833,119 +537,40 @@ namespace GameMaker.Project
                 // Write sprite data.
                 WriteString(sprite.Name);
 
-                // If version is 8.0, write last changed.
-                if (version == GMVersionType.GameMaker80)
-                    WriteDouble(sprite.LastChanged);
+                // Write sprite data.
+                WriteInt(sprite.OriginX);
+                WriteInt(sprite.OriginY);
 
-                // Write version number.
-                if (version < GMVersionType.GameMaker60)
-                    WriteInt(400);
-                else if (version == GMVersionType.GameMaker70 || version == GMVersionType.GameMaker60)
-                    WriteInt(542);
-                else if (version == GMVersionType.GameMaker80)
+                // Sprite number of sub images.
+                WriteInt(sprite.SubImages.Length);
+
+                // Iterate through sub-images.
+                for (int j = 0; j < sprite.SubImages.Length; j++)
+                {
+                    // Write version.
                     WriteInt(800);
 
-                if (version < GMVersionType.GameMaker80)
-                {
-                    // Write sprite data
-                    WriteInt(sprite.Width);
-                    WriteInt(sprite.Height);
-                    WriteInt(sprite.BoundingBoxLeft);
-                    WriteInt(sprite.BoundingBoxRight);
-                    WriteInt(sprite.BoundingBoxBottom);
-                    WriteInt(sprite.BoundingBoxTop);
-                    WriteBool(sprite.Transparent);
+                    // Write width and height of image.
+                    WriteInt(sprite.SubImages[j].Width);
+                    WriteInt(sprite.SubImages[j].Height);
 
-                    // Check version.
-                    if (version > GMVersionType.GameMaker53)
+                    // If the image data is not size zero.
+                    if (sprite.SubImages[j].Width != 0 && sprite.SubImages[j].Height != 0)
                     {
-                        // Write sprite data.
-                        WriteBool(sprite.SmoothEdges);
-                        WriteBool(sprite.Preload);
+                        WriteInt(sprite.SubImages[j].Data.Length);
+                        WriteBytes(sprite.SubImages[j].Data);
                     }
-
-                    // Write sprite data.
-                    WriteInt((int)sprite.BoundingBoxMode);
-                    WriteBool(sprite.Precise);
-
-                    // Check version.
-                    if (version < GMVersionType.GameMaker60)
-                    {
-                        // Write sprite data.
-                        WriteBool(sprite.UseVideoMemory);
-                        WriteBool(sprite.LoadOnlyOnUse);
-                    }
-
-                    // Write sprite data.
-                    WriteInt(sprite.OriginX);
-                    WriteInt(sprite.OriginY);
-
-                    // If there are sub-images to write.
-                    if (sprite.SubImages != null)
-                    {
-                        // Write number of sub images.
-                        WriteInt(sprite.SubImages.Length);
-
-                        // Iterate through sub-images.
-                        for (int j = 0; j < sprite.SubImages.Length; j++)
-                        {
-                            // If the sub-image at index does not exists, continue.
-                            if (sprite.SubImages[j] == null)
-                            {
-                                // No object exists at this id.
-                                WriteInt(-1);
-                                continue;
-                            }
-                            else  // There's image data.
-                                WriteInt(10);
-
-                            // Write size of image data.
-                            WriteInt(sprite.SubImages[j].Data.Length);
-
-                            // Write image data.
-                            WriteBytes(sprite.SubImages[j].Data);
-                        }
-                    }
-                    else  // There are no sub-images to write.
-                        WriteInt(0);
                 }
-                else  // Game Maker 8.0.
-                {
-                    // Write sprite data.
-                    WriteInt(sprite.OriginX);
-                    WriteInt(sprite.OriginY);
 
-                    // Sprite number of sub images.
-                    WriteInt(sprite.SubImages.Length);
-
-                    // Iterate through sub-images.
-                    for (int j = 0; j < sprite.SubImages.Length; j++)
-                    {
-                        // Write version.
-                        WriteInt(800);
-
-                        // Write width and height of image.
-                        WriteInt(sprite.SubImages[j].Width);
-                        WriteInt(sprite.SubImages[j].Height);
-
-                        // If the image data is not size zero.
-                        if (sprite.SubImages[j].Width != 0 && sprite.SubImages[j].Height != 0)
-                        {
-                            WriteInt(sprite.SubImages[j].Data.Length);
-                            WriteBytes(sprite.SubImages[j].Data);
-                        }
-                    }
-
-                    // Write sprite data.
-                    WriteInt((int)sprite.ShapeMode);
-                    WriteInt(sprite.AlphaTolerance);
-                    WriteBool(sprite.UseSeperateCollisionMasks);
-                    WriteInt((int)sprite.BoundingBoxMode);
-				    WriteInt(sprite.BoundingBoxLeft);
-                    WriteInt(sprite.BoundingBoxRight);
-                    WriteInt(sprite.BoundingBoxBottom);
-                    WriteInt(sprite.BoundingBoxTop);
-                }
+                // Write sprite data.
+                WriteInt((int)sprite.ShapeMode);
+                WriteInt(sprite.AlphaTolerance);
+                WriteBool(sprite.UseSeperateCollisionMasks);
+                WriteInt((int)sprite.BoundingBoxMode);
+                WriteInt(sprite.BoundingBoxLeft);
+                WriteInt(sprite.BoundingBoxRight);
+                WriteInt(sprite.BoundingBoxBottom);
+                WriteInt(sprite.BoundingBoxTop);
 
                 // End compression.
                 EndCompress();
@@ -962,10 +587,7 @@ namespace GameMaker.Project
         private void WriteBackgrounds(GMList<GMBackground> backgrounds, GMVersionType version)
         {
             // Write version number.
-            if (version < GMVersionType.GameMaker80)
-                WriteInt(400);
-            else
-                WriteInt(800);
+            WriteInt(800);
 
             // Amount of background ids.
             WriteInt(backgrounds.LastId + 1);
@@ -973,12 +595,8 @@ namespace GameMaker.Project
             // Iterate through backgrounds.
             for (int i = 0; i < backgrounds.LastId + 1; i++)
             {
-                // If version is 8.0, compress.
-                if (version == GMVersionType.GameMaker80)
-                    Compress();
-
                 // Try to get the resource by the current id.
-                GMBackground background = backgrounds.Find(delegate(GMBackground b) { return b.Id == i; });
+                GMBackground background = backgrounds.Find(delegate (GMBackground b) { return b.Id == i; });
 
                 // If the background at index does not exists, continue.
                 if (background == null)
@@ -994,88 +612,27 @@ namespace GameMaker.Project
                 // Get background data.
                 WriteString(background.Name);
 
-                // If version is 8.0, write last changed.
-                if (version == GMVersionType.GameMaker80)
-                    WriteDouble(background.LastChanged);
+                // Write background data.
+                WriteBool(background.UseAsTileSet);
+                WriteInt(background.TileWidth);
+                WriteInt(background.TileHeight);
+                WriteInt(background.HorizontalOffset);
+                WriteInt(background.VerticalOffset);
+                WriteInt(background.HorizontalSeperation);
+                WriteInt(background.VerticalSeperation);
 
-                // Write version number.
-                if (version < GMVersionType.GameMaker60)
-                    WriteInt(400);
-                else if (version == GMVersionType.GameMaker60 || version == GMVersionType.GameMaker70)
-                    WriteInt(543);
-                else if (version == GMVersionType.GameMaker80)
-                    WriteInt(710);
+                // Write version.
+                WriteInt(800);
 
-                // If version is less than GM 8.0.
-                if (version < GMVersionType.GameMaker80)
+                // Write background data.
+                WriteInt(background.Width);
+                WriteInt(background.Height);
+
+                // If the sprite size is not zero, write image data.
+                if (background.Width != 0 && background.Height != 0)
                 {
-                    // Write background data
-                    WriteInt(background.Width);
-                    WriteInt(background.Height);
-                    WriteBool(background.Transparent);
-
-                    // Check version.
-                    if (version > GMVersionType.GameMaker53)
-                    {
-                        // Write background data.
-                        WriteBool(background.SmoothEdges);
-                        WriteBool(background.Preload);
-                        WriteBool(background.UseAsTileSet);
-                        WriteInt(background.TileWidth);
-                        WriteInt(background.TileHeight);
-                        WriteInt(background.HorizontalOffset);
-                        WriteInt(background.VerticalOffset);
-                        WriteInt(background.HorizontalSeperation);
-                        WriteInt(background.VerticalSeperation);
-                    }
-                    else
-                    {
-                        // Write background data.
-                        WriteBool(background.UseVideoMemory);
-                        WriteBool(background.LoadOnlyOnUse);
-                    }
-
-                    // If image data does not exist.
-                    if (background.Image != null)
-                    {
-                        // There is image data, write flags.
-                        WriteBool(true);
-                        WriteInt(10);
-
-                        // Write size of image data.
-                        WriteInt(background.Image.Data.Length);
-
-                        // Write image data.
-                        WriteBytes(background.Image.Data);
-
-                    }  // No image data exist.
-                    else
-                        WriteBool(false);
-                }
-                else  // GM 8.0.
-                {
-                    // Write background data.
-                    WriteBool(background.UseAsTileSet);
-                    WriteInt(background.TileWidth);
-                    WriteInt(background.TileHeight);
-                    WriteInt(background.HorizontalOffset);
-                    WriteInt(background.VerticalOffset);
-                    WriteInt(background.HorizontalSeperation);
-                    WriteInt(background.VerticalSeperation);
-
-                    // Write version.
-                    WriteInt(800);
-
-                    // Write background data.
-                    WriteInt(background.Width);
-                    WriteInt(background.Height);
-
-                    // If the sprite size is not zero, write image data.
-                    if (background.Width != 0 && background.Height != 0)
-                    {
-                        WriteInt(background.Image.Data.Length);
-                        WriteBytes(background.Image.Data);
-                    }
+                    WriteInt(background.Image.Data.Length);
+                    WriteBytes(background.Image.Data);
                 }
 
                 // End compression.
@@ -1092,11 +649,7 @@ namespace GameMaker.Project
         /// </summary>
         private void WritePaths(GMList<GMPath> paths, GMVersionType version)
         {
-            // Write version number.
-            if (version < GMVersionType.GameMaker80)
-                WriteInt(420);
-            else
-                WriteInt(800);
+            WriteInt(800);
 
             // Amount of path ids.
             WriteInt(paths.LastId + 1);
@@ -1104,12 +657,8 @@ namespace GameMaker.Project
             // Iterate through paths.
             for (int i = 0; i < paths.LastId + 1; i++)
             {
-                // If version is 8.0, compress.
-                if (version == GMVersionType.GameMaker80)
-                    Compress();
-
                 // Try to get the resource by the current id.
-                GMPath path = paths.Find(delegate(GMPath p) { return p.Id == i; });
+                GMPath path = paths.Find(delegate (GMPath p) { return p.Id == i; });
 
                 // If the path at index does not exists, continue.
                 if (path == null)
@@ -1125,34 +674,15 @@ namespace GameMaker.Project
                 // Write path data.
                 WriteString(path.Name);
 
-                // If version is 8.0, write last changed.
-                if (version == GMVersionType.GameMaker80)
-                    WriteDouble(path.LastChanged);
+                WriteInt(530);
 
-                // Write version.
-                if (version < GMVersionType.GameMaker53)
-                    WriteInt(420);
-                else
-                    WriteInt(530);
-
-                // Versions greater than 5.2, support the following variables.
-                if (version > GMVersionType.GameMaker52)
-                {
-                    // Write path data.
-                    WriteBool(path.Smooth);
-                    WriteBool(path.Closed);
-                    WriteInt(path.Precision);
-                    WriteInt(path.RoomId);
-                    WriteInt(path.SnapX);
-                    WriteInt(path.SnapY);
-                }
-                else
-                {
-                    // Write path data.
-                    WriteBool(path.Smooth);
-                    WriteInt((int)path.ActionAtTheEnd);
-                    WriteEmpty(4);
-                }
+                // Write path data.
+                WriteBool(path.Smooth);
+                WriteBool(path.Closed);
+                WriteInt(path.Precision);
+                WriteInt(path.RoomId);
+                WriteInt(path.SnapX);
+                WriteInt(path.SnapY);
 
                 // If there are points to write.
                 if (path.Points != null)
@@ -1187,10 +717,7 @@ namespace GameMaker.Project
         private void WriteScripts(GMList<GMScript> scripts, GMVersionType version)
         {
             // Write version number.
-            if (version < GMVersionType.GameMaker80)
-                WriteInt(400);
-            else
-                WriteInt(800);
+            WriteInt(800);
 
             // Write amount of script ids.
             WriteInt(scripts.LastId + 1);
@@ -1198,12 +725,8 @@ namespace GameMaker.Project
             // Iterate through scripts.
             for (int i = 0; i < scripts.LastId + 1; i++)
             {
-                // If version is 8.0, compress.
-                if (version == GMVersionType.GameMaker80)
-                    Compress();
-
                 // Try to get the resource by the current id.
-                GMScript script = scripts.Find(delegate(GMScript s) { return s.Id == i; });
+                GMScript script = scripts.Find(delegate (GMScript s) { return s.Id == i; });
 
                 // If the script at the current id does not exist, continue.
                 if (script == null)
@@ -1219,15 +742,7 @@ namespace GameMaker.Project
                 // Write script name.
                 WriteString(script.Name);
 
-                // If version is 8.0, write last changed.
-                if (version == GMVersionType.GameMaker80)
-                    WriteDouble(script.LastChanged);
-
-                // Write version.
-                if (version == GMVersionType.GameMaker80)
-                    WriteInt(800);
-                else
-                    WriteInt(400);
+                WriteInt(400);
 
                 // Write script data.
                 WriteString(script.Code);
@@ -1246,62 +761,7 @@ namespace GameMaker.Project
         /// </summary>
         private void WriteDataFiles(GMList<GMDataFile> dataFiles, GMVersionType version)
         {
-            // If the version is greater than 5.3, return.
-            if (version > GMVersionType.GameMaker53)
-                return;
-
-            // Write version.
-            WriteInt(440);
-
-            // Write amount of script ids.
-            WriteInt(dataFiles.LastId + 1);
-
-            // Iterate through data files.
-            for (int i = 0; i < dataFiles.LastId + 1; i++)
-            {
-                // Try to get the resource by the current id.
-                GMDataFile dataFile = dataFiles.Find(delegate(GMDataFile d) { return d.Id == i; });
-
-                // If the script at current id does not exists, continue.
-                if (dataFile == null)
-                {
-                    // No object exists at this id.
-                    WriteBool(false);
-                    continue;
-                }
-                else
-                    WriteBool(true);
-
-                // Write data file name.
-                WriteString(dataFile.Name);
-
-                // Write version.
-                WriteInt(440);
-
-                // Write data file data.
-                WriteString(dataFile.FileName);
-
-                // If data file exists.
-                if (dataFile.Data != null)
-                {
-                    // Data exists.
-                    WriteBool(true);
-
-                    // Write the size of the data file.
-                    WriteInt(dataFile.Data.Length);
-
-                    // Write data file data.
-                    WriteBytes(dataFile.Data);
-                }
-                else  // Data does not exist.
-                    WriteBool(false);
-
-                // Write data file data.
-                WriteInt((int)dataFile.ExportMode);
-                WriteBool(dataFile.OverwriteFile);
-                WriteBool(dataFile.FreeDataMemory);
-                WriteBool(dataFile.RemoveAtGameEnd);
-            }
+            return;
         }
 
         #endregion
@@ -1313,15 +773,8 @@ namespace GameMaker.Project
         /// </summary>
         private void WriteFonts(GMList<GMFont> fonts, GMVersionType version)
         {
-            // If the version is before Game Maker 6, return.
-            if (version < GMVersionType.GameMaker60)
-                return;
-
             // Write version number.
-            if (version < GMVersionType.GameMaker80)
-                WriteInt(540);
-            else
-                WriteInt(800);
+            WriteInt(800);
 
             // Amount of font ids.
             WriteInt(fonts.LastId + 1);
@@ -1330,11 +783,10 @@ namespace GameMaker.Project
             for (int i = 0; i < fonts.LastId + 1; i++)
             {
                 // If version is 8.0, compress.
-                if (version >= GMVersionType.GameMaker80)
-                    Compress();
+                Compress();
 
                 // Try to get the resource with the current id.
-                GMFont font = fonts.Find(delegate(GMFont f) { return f.Id == i; });
+                GMFont font = fonts.Find(delegate (GMFont f) { return f.Id == i; });
 
                 // If the resource at index does not exist, continue.
                 if (font == null)
@@ -1350,15 +802,9 @@ namespace GameMaker.Project
                 // Write font name.
                 WriteString(font.Name);
 
-                // If version is 8.0, write last changed.
-                if (version >= GMVersionType.GameMaker80)
-                    WriteDouble(font.LastChanged);
+                WriteDouble(font.LastChanged);
 
-                // If the version is greater than or equal to 8.
-                if (version >= GMVersionType.GameMaker80)
-                    WriteInt(800);
-                else
-                    WriteInt(540);
+                WriteInt(800);
 
                 // Write font data.
                 WriteString(font.FontName);
@@ -1367,18 +813,10 @@ namespace GameMaker.Project
                 WriteBool(font.Italic);
 
                 // Write font data.
-                if (version >= GMVersionType.GameMaker81)
-                {
-                    WriteShort(font.CharacterRangeMin);
-                    WriteByte(font.AntiAliasing);
-                    WriteByte(font.CharacterSet);
-                    WriteInt(font.CharacterRangeMax);
-                }
-                else
-                {
-                    WriteInt(font.CharacterRangeMin);
-                    WriteInt(font.CharacterRangeMax);
-                }
+                WriteShort(font.CharacterRangeMin);
+                WriteByte(font.AntiAliasing);
+                WriteByte(font.CharacterSet);
+                WriteInt(font.CharacterRangeMax);
 
                 // End object compression.
                 EndCompress();
@@ -1395,10 +833,7 @@ namespace GameMaker.Project
         private void WriteTimelines(GMList<GMTimeline> timelines, GMVersionType version)
         {
             // Write version number.
-            if (version < GMVersionType.GameMaker80)
-                WriteInt(500);
-            else
-                WriteInt(800);
+            WriteInt(800);
 
             // Write the amount of timeline ids.
             WriteInt(timelines.LastId + 1);
@@ -1406,12 +841,8 @@ namespace GameMaker.Project
             // Iterate through timelines.
             for (int i = 0; i < timelines.LastId + 1; i++)
             {
-                // If version is 8.0, compress.
-                if (version == GMVersionType.GameMaker80)
-                    Compress();
-
                 // Try to get the resource with the current id.
-                GMTimeline timeline = timelines.Find(delegate(GMTimeline t) { return t.Id == i; });
+                GMTimeline timeline = timelines.Find(delegate (GMTimeline t) { return t.Id == i; });
 
                 // If the resource at index does not exist, continue.
                 if (timeline == null)
@@ -1426,10 +857,6 @@ namespace GameMaker.Project
 
                 // Write timeline name.
                 WriteString(timeline.Name);
-
-                // If version is 8.0, write last changed.
-                if (version == GMVersionType.GameMaker80)
-                    WriteDouble(timeline.LastChanged);
 
                 // Write version.
                 WriteInt(500);
@@ -1461,17 +888,14 @@ namespace GameMaker.Project
         #endregion
 
         #region WriteObjects
-        
+
         /// <summary>
         /// Writes objects from Game Maker project.
         /// </summary>
         private void WriteObjects(GMList<GMObject> objects, GMVersionType version)
         {
             // Write version number.
-            if (version < GMVersionType.GameMaker80)
-                WriteInt(400);
-            else
-                WriteInt(800);
+            WriteInt(800);
 
             // Write the amount of object ids.
             WriteInt(objects.LastId + 1);
@@ -1479,12 +903,8 @@ namespace GameMaker.Project
             // Iterate through objects
             for (int i = 0; i < objects.LastId + 1; i++)
             {
-                // If version is 8.0, compress.
-                if (version == GMVersionType.GameMaker80)
-                    Compress();
-
                 // Try to get the resource with the current id.
-                GMObject obj = objects.Find(delegate(GMObject o) { return o.Id == i; });
+                GMObject obj = objects.Find(delegate (GMObject o) { return o.Id == i; });
 
                 // If the resource at index does not exist, continue.
                 if (obj == null)
@@ -1499,10 +919,6 @@ namespace GameMaker.Project
 
                 // Write object name.
                 WriteString(obj.Name);
-
-                // If version is 8.0, write last changed.
-                if (version == GMVersionType.GameMaker80)
-                    WriteDouble(obj.LastChanged);
 
                 // Write version.
                 WriteInt(430);
@@ -1519,17 +935,7 @@ namespace GameMaker.Project
                 // The amount of main event types.
                 int amount = 11;
 
-                // If version is 8.0.
-                if (version == GMVersionType.GameMaker80)
-                {
-                    // 12 main events.
-                    amount = 12;
-
-                    // Write int.
-                    WriteInt(11);
-                }
-                else  // Write int.
-                    WriteInt(10);
+                WriteInt(10);
 
                 // Iterate through event types.
                 for (int j = 0; j < amount; j++)
@@ -1569,11 +975,7 @@ namespace GameMaker.Project
         /// </summary>
         private void WriteRooms(GMList<GMRoom> rooms, GMVersionType version)
         {
-            // Write version number.
-            if (version < GMVersionType.GameMaker80)
-                WriteInt(420);
-            else
-                WriteInt(800);
+            WriteInt(800);
 
             // Write the amount of room ids.
             WriteInt(rooms.LastId + 1);
@@ -1581,12 +983,8 @@ namespace GameMaker.Project
             // Iterate through rooms.
             for (int i = 0; i < rooms.LastId + 1; i++)
             {
-                // If version is 8.0, compress.
-                if (version == GMVersionType.GameMaker80)
-                    Compress();
-
                 // Try to get the resource with the current id.
-                GMRoom room = rooms.Find(delegate(GMRoom r) { return r.Id == i; });
+                GMRoom room = rooms.Find(delegate (GMRoom r) { return r.Id == i; });
 
                 // If the resource at index does not exist, continue.
                 if (room == null)
@@ -1602,22 +1000,6 @@ namespace GameMaker.Project
                 // Write room name.
                 WriteString(room.Name);
 
-                // If version is 8.0, write last changed.
-                if (version == GMVersionType.GameMaker80)
-                    WriteDouble(room.LastChanged);
-
-                // Write version.
-                switch (version)
-                {
-                    case GMVersionType.GameMaker50: WriteInt(500); break;
-                    case GMVersionType.GameMaker51: WriteInt(500); break;
-                    case GMVersionType.GameMaker52: WriteInt(520); break;
-                    case GMVersionType.GameMaker53: WriteInt(520); break;
-                    case GMVersionType.GameMaker60: WriteInt(541); break;
-                    case GMVersionType.GameMaker70: WriteInt(541); break;
-                    case GMVersionType.GameMaker80: WriteInt(541); break;
-                }
-
                 // Write room data.
                 WriteString(room.Caption);
                 WriteInt(room.Width);
@@ -1625,9 +1007,7 @@ namespace GameMaker.Project
                 WriteInt(room.SnapY);
                 WriteInt(room.SnapX);
 
-                // Versions greater than 5.1 support isometric grid.
-                if (version > GMVersionType.GameMaker51)
-                    WriteBool(room.IsometricGrid);
+                WriteBool(room.IsometricGrid);
 
                 WriteInt(room.Speed);
                 WriteBool(room.Persistent);
@@ -1652,9 +1032,7 @@ namespace GameMaker.Project
                     WriteInt(room.Parallaxes[j].HorizontalSpeed);
                     WriteInt(room.Parallaxes[j].VerticalSpeed);
 
-                    // Versions greater than 5.1 support parallax stretching.
-                    if (version > GMVersionType.GameMaker51)
-                        WriteBool(room.Parallaxes[j].Stretch);
+                    WriteBool(room.Parallaxes[j].Stretch);
                 }
 
                 // Write room data.
@@ -1675,13 +1053,9 @@ namespace GameMaker.Project
                     WriteInt(room.Views[k].PortX);
                     WriteInt(room.Views[k].PortY);
 
-                    // Versions greater than 5.3 support port dimensions.
-                    if (version > GMVersionType.GameMaker53)
-                    {
-                        // Write room view data.
-                        WriteInt(room.Views[k].PortWidth);
-                        WriteInt(room.Views[k].PortHeight);
-                    }
+                    // Write room view data.
+                    WriteInt(room.Views[k].PortWidth);
+                    WriteInt(room.Views[k].PortHeight);
 
                     // Write room view data.
                     WriteInt(room.Views[k].HorizontalBorder);
@@ -1706,16 +1080,8 @@ namespace GameMaker.Project
                         WriteInt(room.Instances[l].ObjectId);
                         WriteInt(room.Instances[l].Id);
 
-                        // Versions greater than 5.1 support creation code and instance locking.
-                        if (version > GMVersionType.GameMaker51)
-                        {
-                            WriteString(room.Instances[l].CreationCode);
-                            WriteBool(room.Instances[l].Locked);
-                        }
-
-                        // Write empty reserved bytes.
-                        if (version < GMVersionType.GameMaker52)
-                            WriteEmpty(8);
+                        WriteString(room.Instances[l].CreationCode);
+                        WriteBool(room.Instances[l].Locked);
                     }
                 }
                 else  // Write no instances.
@@ -1741,9 +1107,7 @@ namespace GameMaker.Project
                         WriteInt(room.Tiles[m].Depth);
                         WriteInt(room.Tiles[m].Id);
 
-                        // Versions greater than 5.1 support tile locking.
-                        if (version > GMVersionType.GameMaker51)
-                            WriteBool(room.Tiles[m].Locked);
+                        WriteBool(room.Tiles[m].Locked);
                     }
                 }
                 else  // Write no tiles.
@@ -1762,27 +1126,10 @@ namespace GameMaker.Project
                 WriteBool(room.DeleteUnderlyingObjects);
                 WriteBool(room.DeleteUnderlyingTiles);
 
-                // Versions greater than 5.3 don't support tile settings.
-                if (version > GMVersionType.GameMaker53)
-                {
-                    // Write room data.
-                    WriteInt((int)room.CurrentTab);
-                    WriteInt(room.ScrollBarX);
-                    WriteInt(room.ScrollBarY);
-                }
-                else
-                {
-                    // Write room data.
-                    WriteInt(room.TileWidth);
-                    WriteInt(room.TileHeight);
-                    WriteInt(room.TileHorizontalSeperation);
-                    WriteInt(room.TileVerticalSeperation);
-                    WriteInt(room.TileHorizontalOffset);
-                    WriteInt(room.TileVerticalOffset);
-                    WriteInt((int)room.CurrentTab);
-                    WriteInt(room.ScrollBarX);
-                    WriteInt(room.ScrollBarY);
-                }
+                // Write room data.
+                WriteInt((int)room.CurrentTab);
+                WriteInt(room.ScrollBarX);
+                WriteInt(room.ScrollBarY);
 
                 // End object compression.
                 EndCompress();
@@ -1889,15 +1236,8 @@ namespace GameMaker.Project
             // Iterate through includes.
             for (int i = 0; i < includes.Length; i++)
             {
-                // If version is 8.0, write last changed.
-                if (version == GMVersionType.GameMaker80)
-                    WriteDouble(includes[i].LastChanged);
-
                 // Write version number.
-                if (version < GMVersionType.GameMaker80)
-                    WriteInt(620);
-                else
-                    WriteInt(800);
+                WriteInt(800);
 
                 // Write include data.
                 WriteString(includes[i].FileName);
@@ -1951,32 +1291,20 @@ namespace GameMaker.Project
         /// </summary>
         private void WriteGameInformation(GMGameInformation gameInfo, GMVersionType version)
         {
-            // If version is 8.0, compress.
-            if (version == GMVersionType.GameMaker80)
-                Compress();
-
             // Write game information data.
             WriteInt(gameInfo.BackgroundColor);
             WriteBool(gameInfo.MimicGameWindow);
 
-            // Versions greater than 5.3, support the following data.
-            if (version > GMVersionType.GameMaker53)
-            {
-                // Write game information data.
-                WriteString(gameInfo.FormCaption);
-                WriteInt(gameInfo.X);
-                WriteInt(gameInfo.Y);
-                WriteInt(gameInfo.Width);
-                WriteInt(gameInfo.Height);
-                WriteBool(gameInfo.ShowBorder);
-                WriteBool(gameInfo.AllowResize);
-                WriteBool(gameInfo.AlwaysOnTop);
-                WriteBool(gameInfo.PauseGame);
-            }
-
-            // If version is 8.0, write last changed.
-            if (version == GMVersionType.GameMaker80)
-                WriteDouble(gameInfo.LastChanged);
+            // Write game information data.
+            WriteString(gameInfo.FormCaption);
+            WriteInt(gameInfo.X);
+            WriteInt(gameInfo.Y);
+            WriteInt(gameInfo.Width);
+            WriteInt(gameInfo.Height);
+            WriteBool(gameInfo.ShowBorder);
+            WriteBool(gameInfo.AllowResize);
+            WriteBool(gameInfo.AlwaysOnTop);
+            WriteBool(gameInfo.PauseGame);
 
             // Write game information data.
             WriteString(gameInfo.Information);
@@ -1995,18 +1323,13 @@ namespace GameMaker.Project
         private void WriteTree(GMNode rootNode, GMVersionType version)
         {
             // Write version number.
-            if (version < GMVersionType.GameMaker60)
-                WriteInt(500);
-            else if (version == GMVersionType.GameMaker60)
-                WriteInt(540);
-            else if (version >= GMVersionType.GameMaker70)
-                WriteInt(700);
+            WriteInt(700);
 
             // Write room execution Order.
             WriteInt(0);
 
             // Set the number of main resource nodes.
-            int rootNum = (version > GMVersionType.GameMaker60) ? 12 : 11;
+            int rootNum = 12;
 
             // Iterate through Game Maker project root nodes
             for (int i = 0; i < rootNum; i++)

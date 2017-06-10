@@ -604,14 +604,6 @@ namespace GameMaker.Common
     /// </summary>
     public enum GMVersionType : int
     {
-        GameMaker50 = 500,
-        GameMaker51 = 510,
-        GameMaker52 = 520,
-        GameMaker53 = 530,
-        GameMaker60 = 600,
-        GameMaker70 = 701,
-        GameMaker80 = 800,
-        GameMaker81 = 810,
         GameMakerStudio = 900
     };
 

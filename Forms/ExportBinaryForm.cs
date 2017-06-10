@@ -507,7 +507,7 @@ namespace GMare.Forms
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 // Set file filter
-                ofd.Filter = "Supported Files (.bmp, .png, .gif, .gmk, .gm6, .gmd .gm81 .gmx)|*.bmp;*.png;*.gif;*.gmk;*.gm6;*.gmd;*.gm81;*.gmx;";
+                ofd.Filter = "Supported Files (.bmp, .png, .gif, .gmx)|*.bmp;*.png;*.gif;*.gmx;";
 
                 // If the dialog result was not Ok, return
                 if (ofd.ShowDialog() != DialogResult.OK)

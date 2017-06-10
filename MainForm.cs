@@ -415,7 +415,7 @@ namespace GMare
                 using (OpenFileDialog ofd = new OpenFileDialog())
                 {
                     // Set file format filter
-                    ofd.Filter = "Game Maker Project Files (.gmk, .gm6, .gmd .gm81 .gmx)|*.gmk;*.gm6;*.gmd;*.gm81;*.gmx;";
+                    ofd.Filter = "Game Maker Project Files (.gmx)|*.gmx;";
                     ofd.Title = "Open A Game Maker Project For Export";
 
                     // If the dialog result is Ok
@@ -1161,7 +1161,7 @@ namespace GMare
             using (OpenFileDialog form = new OpenFileDialog())
             {
                 // Set file format filter
-                form.Filter = "Game Maker Project Files (.gmk, .gm6, .gmd .gm81 .gmx)|*.gmk;*.gm6;*gmd;*gm81;*.gmx;";
+                form.Filter = "Game Maker Project Files (.gmx)|*.gmx;";
                 form.Title = "Import Objects From Game Maker Project";
 
                 // If the dialog result is not Ok, return
