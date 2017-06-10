@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using Pyxosoft.Windows.Tools.PyxTools.Controls;
 using Pyxosoft.Windows.Tools.PyxTools.Controls.Design;
 using GenericUndoRedo;
-using AutoUpdaterDotNET;
 using GameMaker.Resource;
 using GMare.Forms;
 using GMare.Objects;
@@ -116,9 +115,6 @@ namespace GMare
         {
             InitializeComponent();
 
-            // Check for an update
-            AutoUpdater.Start(GMare.Properties.Resources.UpdateURL);
-            
             // Initialize UI with data
             SetUI();
         }

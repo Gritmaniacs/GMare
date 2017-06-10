@@ -73,25 +73,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoUpdater\AutoUpdater.cs" />
-    <Compile Include="AutoUpdater\DownloadUpdateDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AutoUpdater\DownloadUpdateDialog.designer.cs">
-      <DependentUpon>DownloadUpdateDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AutoUpdater\RemindLaterForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AutoUpdater\RemindLaterForm.designer.cs">
-      <DependentUpon>RemindLaterForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AutoUpdater\UpdateForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AutoUpdater\UpdateForm.designer.cs">
-      <DependentUpon>UpdateForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\GMareBackgroundPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -332,15 +313,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AutoUpdater\DownloadUpdateDialog.resx">
-      <DependentUpon>DownloadUpdateDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AutoUpdater\RemindLaterForm.resx">
-      <DependentUpon>RemindLaterForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AutoUpdater\UpdateForm.resx">
-      <DependentUpon>UpdateForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\GMareBackgroundPanel.resx">
       <DependentUpon>GMareBackgroundPanel.cs</DependentUpon>
     </EmbeddedResource>
