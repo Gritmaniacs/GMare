@@ -2330,6 +2330,16 @@ namespace GMare
             // Set room editor tile selection
             pnlRoomEditor.Tiles = pnlBackground.TileBrush;
             _background = pnlRoomEditor.SelectedBackground;
+
+            var backgroundsSource = roomData == null ? App.Room.Backgrounds : roomData.Room.Backgrounds;
+            cbBackgrounds.Items.Clear();
+
+            foreach (var background in backgroundsSource)
+            {
+                cbBackgrounds.Items.Add(background.Name);
+            }
+
+            cbBackgrounds.SelectedIndex = 0;
         }
 
         /// <summary>

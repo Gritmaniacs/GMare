@@ -107,6 +107,7 @@
             this.tabMain = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxTabControl();
             this.tabTiles = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxTabPage();
             this.grpTiles = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxGroupBox();
+            this.pnlBackground = new GMare.Controls.GMareBackgroundPanel();
             this.pnlBackgroundTools = new System.Windows.Forms.Panel();
             this.butBackgroundGrid = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton();
             this.butReorganizeTiles = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton();
@@ -119,7 +120,7 @@
             this.butSelectionTool = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton();
             this.trkBackgroundMagnify = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxTrackBar();
             this.butReplace = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton();
-            this.pnlBackground = new GMare.Controls.GMareBackgroundPanel();
+            this.cbBackgrounds = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxComboBox();
             this.splBackground = new System.Windows.Forms.Splitter();
             this.grpLayers = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxGroupBox();
             this.butEditorEffects = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton();
@@ -238,8 +239,8 @@
             // 
             this.mnuNewProject.Image = global::GMare.Properties.Resources.application;
             this.mnuNewProject.Name = "mnuNewProject";
-            this.mnuNewProject.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
-                        | System.Windows.Forms.Keys.N)));
+            this.mnuNewProject.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.N)));
             this.mnuNewProject.Size = new System.Drawing.Size(218, 22);
             this.mnuNewProject.Text = "New Project";
             this.mnuNewProject.Click += new System.EventHandler(this.mnuMenuItem_Click);
@@ -248,8 +249,8 @@
             // 
             this.mnuOpenProject.Image = global::GMare.Properties.Resources.file_open;
             this.mnuOpenProject.Name = "mnuOpenProject";
-            this.mnuOpenProject.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
-                        | System.Windows.Forms.Keys.O)));
+            this.mnuOpenProject.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.O)));
             this.mnuOpenProject.Size = new System.Drawing.Size(218, 22);
             this.mnuOpenProject.Text = "Open Project";
             this.mnuOpenProject.Click += new System.EventHandler(this.mnuMenuItem_Click);
@@ -650,8 +651,8 @@
             // 
             // grpRoom
             // 
-            this.grpRoom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpRoom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grpRoom.BackColor = System.Drawing.Color.Transparent;
             this.grpRoom.CenterStatus = false;
             this.grpRoom.Controls.Add(this.lblSize);
@@ -1221,9 +1222,9 @@
             // 
             // pnlRoomEditor
             // 
-            this.pnlRoomEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlRoomEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlRoomEditor.AvoidMouseEvents = false;
             this.pnlRoomEditor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(173)))), ((int)(((byte)(179)))));
             this.pnlRoomEditor.DepthIndex = 0;
@@ -1244,7 +1245,7 @@
             this.pnlRoomEditor.ShowBlocks = true;
             this.pnlRoomEditor.ShowGrid = true;
             this.pnlRoomEditor.ShowInstances = true;
-            this.pnlRoomEditor.Size = new System.Drawing.Size(470, 350);
+            this.pnlRoomEditor.Size = new System.Drawing.Size(517, 350);
             this.pnlRoomEditor.Snap = true;
             this.pnlRoomEditor.TabIndex = 12;
             this.pnlRoomEditor.Tiles = null;
@@ -1313,8 +1314,9 @@
             // grpTiles
             // 
             this.grpTiles.BackColor = System.Drawing.Color.Transparent;
-            this.grpTiles.Controls.Add(this.pnlBackgroundTools);
             this.grpTiles.Controls.Add(this.pnlBackground);
+            this.grpTiles.Controls.Add(this.pnlBackgroundTools);
+            this.grpTiles.Controls.Add(this.cbBackgrounds);
             this.grpTiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpTiles.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.grpTiles.Location = new System.Drawing.Point(4, 152);
@@ -1326,6 +1328,34 @@
             this.grpTiles.TabStop = false;
             this.grpTiles.Text = "Background";
             this.grpTiles.TextBarHeight = 24;
+            // 
+            // pnlBackground
+            // 
+            this.pnlBackground.AutoScroll = true;
+            this.pnlBackground.AutoScrollMinSize = new System.Drawing.Size(258, 106);
+            this.pnlBackground.AvoidMouseEvents = false;
+            this.pnlBackground.BackColor = System.Drawing.Color.White;
+            this.pnlBackground.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pnlBackground.CheckerColor = System.Drawing.Color.Silver;
+            this.pnlBackground.CheckerSize = new System.Drawing.Size(16, 16);
+            this.pnlBackground.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlBackground.Highlighter = null;
+            this.pnlBackground.Image = null;
+            this.pnlBackground.ImageScale = 1;
+            this.pnlBackground.Location = new System.Drawing.Point(10, 106);
+            this.pnlBackground.Name = "pnlBackground";
+            this.pnlBackground.SelectMode = GMare.Controls.GMareBackgroundPanel.SelectType.Normal;
+            this.pnlBackground.ShowGrid = false;
+            this.pnlBackground.Size = new System.Drawing.Size(262, 110);
+            this.pnlBackground.SnapSize = new System.Drawing.Size(8, 8);
+            this.pnlBackground.TabIndex = 1;
+            this.pnlBackground.TileBrush = null;
+            this.pnlBackground.Title = "Background Tiles";
+            this.pnlBackground.ToolTipText = "";
+            this.pnlBackground.ToolTipTitle = "";
+            this.pnlBackground.UseCheckerBoard = true;
+            this.pnlBackground.Zoom = 1F;
+            this.pnlBackground.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlBackground_MouseUp);
             // 
             // pnlBackgroundTools
             // 
@@ -1341,10 +1371,10 @@
             this.pnlBackgroundTools.Controls.Add(this.trkBackgroundMagnify);
             this.pnlBackgroundTools.Controls.Add(this.butReplace);
             this.pnlBackgroundTools.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlBackgroundTools.Location = new System.Drawing.Point(10, 25);
+            this.pnlBackgroundTools.Location = new System.Drawing.Point(10, 49);
             this.pnlBackgroundTools.Name = "pnlBackgroundTools";
-            this.pnlBackgroundTools.Size = new System.Drawing.Size(262, 31);
-            this.pnlBackgroundTools.TabIndex = 0;
+            this.pnlBackgroundTools.Size = new System.Drawing.Size(262, 57);
+            this.pnlBackgroundTools.TabIndex = 1;
             // 
             // butBackgroundGrid
             // 
@@ -1532,6 +1562,7 @@
             this.trkBackgroundMagnify.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trkBackgroundMagnify.ToolTipText = "Slide to set the magnification level";
             this.trkBackgroundMagnify.ToolTipTitle = "Background Magnification";
+            this.trkBackgroundMagnify.Value = 1;
             this.trkBackgroundMagnify.ValueChanged += new System.EventHandler(this.trkMagnify_ValueChanged);
             // 
             // butReplace
@@ -1556,35 +1587,21 @@
             this.butReplace.UseVisualStyleBackColor = true;
             this.butReplace.Click += new System.EventHandler(this.butBackgroundOption_Click);
             // 
-            // pnlBackground
+            // cbBackgrounds
             // 
-            this.pnlBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlBackground.AutoScroll = true;
-            this.pnlBackground.AutoScrollMinSize = new System.Drawing.Size(256, 176);
-            this.pnlBackground.AvoidMouseEvents = false;
-            this.pnlBackground.BackColor = System.Drawing.Color.White;
-            this.pnlBackground.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pnlBackground.CheckerColor = System.Drawing.Color.Silver;
-            this.pnlBackground.CheckerSize = new System.Drawing.Size(16, 16);
-            this.pnlBackground.Highlighter = null;
-            this.pnlBackground.Image = null;
-            this.pnlBackground.ImageScale = 1;
-            this.pnlBackground.Location = new System.Drawing.Point(11, 56);
-            this.pnlBackground.Name = "pnlBackground";
-            this.pnlBackground.SelectMode = GMare.Controls.GMareBackgroundPanel.SelectType.Normal;
-            this.pnlBackground.ShowGrid = false;
-            this.pnlBackground.Size = new System.Drawing.Size(260, 180);
-            this.pnlBackground.SnapSize = new System.Drawing.Size(8, 8);
-            this.pnlBackground.TabIndex = 1;
-            this.pnlBackground.TileBrush = null;
-            this.pnlBackground.Title = "Background Tiles";
-            this.pnlBackground.ToolTipText = "";
-            this.pnlBackground.ToolTipTitle = "";
-            this.pnlBackground.UseCheckerBoard = true;
-            this.pnlBackground.Zoom = 1F;
-            this.pnlBackground.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlBackground_MouseUp);
+            this.cbBackgrounds.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cbBackgrounds.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cbBackgrounds.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbBackgrounds.FormattingEnabled = true;
+            this.cbBackgrounds.ItemHeight = 18;
+            this.cbBackgrounds.Location = new System.Drawing.Point(10, 25);
+            this.cbBackgrounds.Name = "cbBackgrounds";
+            this.cbBackgrounds.Size = new System.Drawing.Size(262, 24);
+            this.cbBackgrounds.TabIndex = 0;
+            this.cbBackgrounds.TextOffsetX = 0;
+            this.cbBackgrounds.TextOffsetY = 0;
+            this.cbBackgrounds.ToolTipText = "";
+            this.cbBackgrounds.ToolTipTitle = "";
             // 
             // splBackground
             // 
@@ -1798,9 +1815,9 @@
             // 
             // lstLayers
             // 
-            this.lstLayers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstLayers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstLayers.CheckBoxCheckedImage = global::GMare.Properties.Resources.eye;
             this.lstLayers.CheckBoxImageOffsetX = 0;
             this.lstLayers.CheckBoxImageOffsetY = -1;
@@ -1844,8 +1861,8 @@
             // 
             // txtObject
             // 
-            this.txtObject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtObject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtObject.ButtonImage = null;
             this.txtObject.ButtonImageXOffset = 0;
             this.txtObject.ButtonImageYOffset = 0;
@@ -1882,9 +1899,9 @@
             // 
             // tabInstancesMain
             // 
-            this.tabInstancesMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabInstancesMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabInstancesMain.BackColor = System.Drawing.Color.Transparent;
             this.tabInstancesMain.Controls.Add(this.tabInstances);
             this.tabInstancesMain.Controls.Add(this.tabBlocks);
@@ -1913,9 +1930,9 @@
             // 
             // lstInstances
             // 
-            this.lstInstances.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstInstances.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstInstances.CellSize = new System.Drawing.Size(16, 16);
             this.lstInstances.ContextMenuStrip = this.mnuInstances;
             this.lstInstances.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -2203,13 +2220,14 @@
             this.trkBlockMagnify.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trkBlockMagnify.ToolTipText = "Slide to set the magnification level";
             this.trkBlockMagnify.ToolTipTitle = "Block Magnification";
+            this.trkBlockMagnify.Value = 1;
             this.trkBlockMagnify.ValueChanged += new System.EventHandler(this.trkMagnify_ValueChanged);
             // 
             // pnlBlockEditor
             // 
-            this.pnlBlockEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlBlockEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlBlockEditor.AutoScroll = true;
             this.pnlBlockEditor.AutoScrollMinSize = new System.Drawing.Size(256, 263);
             this.pnlBlockEditor.BackColor = System.Drawing.Color.White;
@@ -2580,6 +2598,7 @@
         private System.Windows.Forms.ToolStripMenuItem mnuSelectAll;
         private Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton butReorganizeTiles;
         private Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton butBackgroundGrid;
+        private Pyxosoft.Windows.Tools.PyxTools.Controls.PyxComboBox cbBackgrounds;
     }
 }
 
