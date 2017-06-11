@@ -245,7 +245,7 @@ namespace GMare
                 using (OpenFileDialog form = new OpenFileDialog())
                 {
                     // Set file format filter
-                    form.Filter = "GMare Project File (.gmpx)|*.gmpx";
+                    form.Filter = "Game Maker Studio Project File (.gmx)|*.gmx|GMare Project File (.gmpx)|*.gmpx";
                     form.Title = "Open A GMare Project File";
 
                     // Stop the room editor from processing mouse events from double click file selection

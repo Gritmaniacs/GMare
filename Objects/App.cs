@@ -38,6 +38,7 @@ using GameMaker.Common;
 using GameMaker.Project;
 using GameMaker.Resource;
 using GMare.Forms;
+using System.Linq;
 
 namespace GMare.Objects
 {
@@ -275,34 +276,147 @@ namespace GMare.Objects
                     }
                 }
             }
-
-            // If a room already exists, dispose of it
-            if (Room != null)
-                Room.Dispose();
-
-            // Create a new stream reader, read in standard xml project file
-            using (StreamReader sr = new StreamReader(file))
+            else if (ext == ".gmpx")
             {
-                XmlSerializer reader = new XmlSerializer(typeof(GMareRoom));
-                Room = (GMareRoom)reader.Deserialize(sr);
-            }
+                // If a room already exists, dispose of it
+                if (Room != null)
+                    Room.Dispose();
 
-            // If the room was not loaded successfully, inform the user
-            if (Room == null)
+                // Create a new stream reader, read in standard xml project file
+                using (StreamReader sr = new StreamReader(file))
+                {
+                    XmlSerializer reader = new XmlSerializer(typeof(GMareRoom));
+                    Room = (GMareRoom)reader.Deserialize(sr);
+                }
+
+                // If the room was not loaded successfully, inform the user
+                if (Room == null)
+                {
+                    MessageBox.Show("There was a problem loading the project data. The file may be invalid or corrupt.", "GMare", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    return;
+                }
+
+                // Remove default background
+                Room.Backgrounds.RemoveAt(0);
+
+                // Correct values for earlier versions
+                CorrectValues(Room);
+
+                // Set edit room and save path, update the UI
+                App.SavePath = file;
+            }
+            else if (ext == ".gmx")
             {
-                MessageBox.Show("There was a problem loading the project data. The file may be invalid or corrupt.", "GMare", MessageBoxButtons.OK, 
-                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return;
+                // If a room already exists, dispose of it
+                if (Room != null)
+                    Room.Dispose();
+
+                var project = new GMProject();
+                project.ReadProject(file);
+
+                var gameMakerRoom = project.Rooms[5];
+
+                var newRoom = new GMareRoom();
+                // TODO: room ID
+                newRoom.Name = gameMakerRoom.Name;
+                newRoom.BackColor = GMUtilities.GMColorToColor(gameMakerRoom.BackgroundColor);
+                newRoom.Width = gameMakerRoom.Width;
+                newRoom.Height = gameMakerRoom.Height;
+                newRoom.TileWidth = gameMakerRoom.TileWidth;
+                newRoom.TileHeight = gameMakerRoom.TileHeight;
+                newRoom.Caption = gameMakerRoom.Caption;
+                newRoom.CreationCode = gameMakerRoom.CreationCode;
+                newRoom.Speed = gameMakerRoom.Speed;
+                newRoom.Persistent = gameMakerRoom.Persistent;
+
+                foreach (var background in project.Backgrounds)
+                {
+                    var newBackground = new GMareBackground();
+                    // TODO
+                    // newBackground.Id = background.Id;
+                    newBackground.GameMakerId = background.Id;
+                    newBackground.Name = background.Name;
+                    newBackground.OffsetX = background.HorizontalOffset;
+                    newBackground.OffsetY = background.VerticalOffset;
+                    newBackground.SeparationX = background.HorizontalSeperation;
+                    newBackground.SeparationY = background.VerticalSeperation;
+                    newBackground.TileWidth = background.TileWidth;
+                    newBackground.TileHeight = background.TileHeight;
+                    newBackground.Image = new Graphics.PixelMap(GMUtilities.GetBitmap(background.Image));
+
+                    newRoom.Backgrounds.Add(newBackground);
+                }
+
+                var groupedTiles = gameMakerRoom.Tiles.GroupBy(t => t.Depth).ToList();
+
+                var widthInTiles = newRoom.Width / newRoom.TileWidth;
+                var heightInTiles = newRoom.Height / newRoom.TileHeight;
+
+                foreach (var group in groupedTiles)
+                {
+                    var newLayer = new GMareLayer();
+                    newLayer.Tiles = new GMareTile[widthInTiles, heightInTiles];
+
+                    var firstTile = group.FirstOrDefault();
+
+                    if (firstTile != null)
+                    {
+                        newLayer.Depth = firstTile.Depth;
+                        newLayer.Name = firstTile.BackgroundName;
+                    }
+
+                    for (int x = 0; x < widthInTiles; x++)
+                    {
+                        for (int y = 0; y < heightInTiles; y++)
+                        {
+                            newLayer.Tiles[x, y] = new GMareTile();
+                        }
+                    }
+
+                    foreach (var tile in group)
+                    {
+                        var tileX = tile.BackgroundX / newRoom.TileWidth;
+                        var tileY = tile.BackgroundY / newRoom.TileHeight;
+
+                        var tileBackground = newRoom.Backgrounds.FirstOrDefault(b => b.Name == tile.BackgroundName);
+
+                        newLayer.Tiles[tileX, tileY] = new GMareTile()
+                        {
+                            BackgroundId = tileBackground != null ? tileBackground.Id : -1,
+                            Blend = GMUtilities.GMColorToColor(tile.BlendColor),
+                            // TODO: FlipMode
+                            // TileId = tile.Id,
+                            TileId = GMareBrush.PositionToSourceTileId(tile.X, tile.Y, tileBackground.Image.Width, new Size(newRoom.TileWidth, newRoom.TileHeight))
+                        };
+                    }
+
+                    newRoom.Layers.Add(newLayer);
+                }
+
+                // TODO: blocks?
+
+                // TODO: instances
+
+                Room = newRoom;
+
+                // If the room was not loaded successfully, inform the user
+                if (Room == null)
+                {
+                    MessageBox.Show("There was a problem loading the project data. The file may be invalid or corrupt.", "GMare", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    return;
+                }
+
+                // Remove default background
+                Room.Backgrounds.RemoveAt(0);
+
+                // Correct values for earlier versions
+                CorrectValues(Room);
+
+                // Set edit room and save path, update the UI
+                App.SavePath = file;
             }
-
-            // Remove default background
-            Room.Backgrounds.RemoveAt(0);
-
-            // Correct values for earlier versions
-            CorrectValues(Room);
-
-            // Set edit room and save path, update the UI
-            App.SavePath = file;
         }
 
         /// <summary>
@@ -332,7 +446,7 @@ namespace GMare.Objects
             // If the room was not loaded successfully, inform the user
             if (room == null)
             {
-                MessageBox.Show("There was a problem loading the project data. The file may be invalid or corrupt.", "GMare", MessageBoxButtons.OK, 
+                MessageBox.Show("There was a problem loading the project data. The file may be invalid or corrupt.", "GMare", MessageBoxButtons.OK,
                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return null;
             }
@@ -487,7 +601,7 @@ namespace GMare.Objects
             foreach (GMareInstance instance in App.Room.Instances)
             {
                 // If the instance's resource id does not match any new objects
-                if (project.Objects.Find(o => o.Id == instance.ObjectId ||  o.Name == instance.ObjectName) == null)
+                if (project.Objects.Find(o => o.Id == instance.ObjectId || o.Name == instance.ObjectName) == null)
                 {
                     // If the id check has already processed the instance's object id
                     if (ids.ContainsKey(instance.ObjectId) == true)
