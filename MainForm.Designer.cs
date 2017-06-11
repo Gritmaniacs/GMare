@@ -1602,6 +1602,7 @@
             this.cbBackgrounds.TextOffsetY = 0;
             this.cbBackgrounds.ToolTipText = "";
             this.cbBackgrounds.ToolTipTitle = "";
+            this.cbBackgrounds.SelectedIndexChanged += new System.EventHandler(this.cbBackgrounds_SelectedIndexChanged);
             // 
             // splBackground
             // 

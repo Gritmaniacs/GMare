@@ -2474,5 +2474,23 @@ namespace GMare
         #endregion
 
         #endregion
+
+        private void cbBackgrounds_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            App.SelectedBackground = App.Room.Backgrounds[cbBackgrounds.SelectedIndex];
+
+            // Update all background UI
+            pnlBackground.SnapSize = App.SelectedBackground.TileSize;
+            pnlBackground.Image = App.SelectedBackground.GetCondensedTileset();
+            pnlRoomEditor.SelectedBackground = App.SelectedBackground;
+            pnlRoomEditor.Image = App.SelectedBackground.GetCondensedTileset();
+            pnlBlockEditor.SelectedBackground = App.SelectedBackground;
+            pnlBlockEditor.Image = App.SelectedBackground.GetSegmentedTileset(1);
+
+            // Set room editor tile selection
+            pnlRoomEditor.Tiles = pnlBackground.TileBrush;
+            _background = pnlRoomEditor.SelectedBackground;
+
+        }
     }
 }

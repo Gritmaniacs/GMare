@@ -48,6 +48,7 @@ namespace GMare.Objects
 
         public static int TILE_EMPTY = -1;                                             // The number for an empty tile id
         public static GMareRoom Room = null;                                           // Global edit room
+        public static GMareBackground SelectedBackground = null;
         public static bool Changed = false;                                            // If the project changed
         public static string SavePath = string.Empty;                                  // A valid save path for the current project
         public static string UndoRedoMaximumAppKey = "UndoRedoMaximum";                // Undo/Redo maximum app.config settings key
