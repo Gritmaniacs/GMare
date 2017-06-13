@@ -173,7 +173,7 @@ namespace GMare.Controls
                 _tileBrush = new GMareBrush();
 
             // Reset selection
-            _tileBrush = GMareBrush.RectangleToTileBrush(new Rectangle(Point.Empty, SnapSize), SnapSize.Width, SnapSize);
+            _tileBrush = GMareBrush.RectangleToTileBrush(new Rectangle(Point.Empty, SnapSize), App.SelectedBackground);
 
             // Update
             UpdateBackBuffer();
@@ -240,8 +240,10 @@ namespace GMare.Controls
                     break;
             }
 
+
+
             // Create tiles based on rectangle
-            _tileBrush = GMareBrush.RectangleToTileBrush(_selection, ImageWidthUnscaled, SnapSize);
+            _tileBrush = GMareBrush.RectangleToTileBrush(_selection, App.SelectedBackground);
 
             // Update
             UpdateBackBuffer();
@@ -288,7 +290,7 @@ namespace GMare.Controls
             _selection = rect;
 
             // Create tiles based on rectangle
-            _tileBrush = GMareBrush.RectangleToTileBrush(_selection, ImageWidthUnscaled, SnapSize);
+            _tileBrush = GMareBrush.RectangleToTileBrush(_selection, App.SelectedBackground);
 
             // Update
             UpdateBackBuffer();
@@ -337,12 +339,14 @@ namespace GMare.Controls
                         cell.X = (int)(col * SnapSize.Width);
                         cell.Y = (int)(row * SnapSize.Height);
 
+                        // TODO: restore this
+                        // TileId refactor
                         // If the highlight brush does not contain the iterated tile id, continue
-                        if (!_highlighter.Contains(GMareBrush.PositionToSourceTileId(cell.X, cell.Y, Image.Width, SnapSize)))
-                            continue;
+                        // if (!_highlighter.Contains(GMareBrush.PositionToSourceTileId(cell.X, cell.Y, Image.Width, SnapSize)))
+                        //    continue;
 
                         // Draw highlight
-                        gfx.FillRectangle(highlighter, cell);
+                        //gfx.FillRectangle(highlighter, cell);
                     }
                 }
             }

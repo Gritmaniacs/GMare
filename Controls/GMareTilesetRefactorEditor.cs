@@ -325,7 +325,13 @@ namespace GMare.Controls
 
     private void mnuClear_Click(object sender, EventArgs e)
     {
-      if (this._targets == null)
+            // TileId Refactor
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
+            /*
+
+            if (this._targets == null)
         return;
       this.PanelChanged();
       foreach (int index in this._targets.ToArray())
@@ -340,6 +346,8 @@ namespace GMare.Controls
       }
       this.ResetSelection();
       this.UpdateBackBuffer();
+
+            */
     }
 
     private void Timer_Tick(object sender, EventArgs e)
@@ -452,7 +460,13 @@ namespace GMare.Controls
 
     protected override void OnMouseUp(MouseEventArgs e)
     {
-      base.OnMouseUp(e);
+            // TileId Refactor
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
+            /*
+
+            base.OnMouseUp(e);
       if (this.BackBuffer == null || this._tiles == null || this._tiles.Count == 0)
         return;
       int width = this._cols < this._originalCols ? this._max.Width * this.SnapSize.Width : this.TilesetWidth;
@@ -495,6 +509,8 @@ namespace GMare.Controls
         }
         this.SwapTiles(false);
       }
+
+            */
     }
 
     public void ExecuteContextAction(GMareTilesetRefactorEditor.ContextActionType type)
@@ -577,10 +593,16 @@ namespace GMare.Controls
 
     private void SwapTiles(bool ignoreUpdate)
     {
-      if (this._targets == null || this._swaps == null)
+            // TileId Refactor
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
+            /*
+
+            if (this._targets == null || this._swaps == null)
         return;
-      int[] array1 = this._targets.ToArray();
-      int[] array2 = this._swaps.ToArray();
+      GMareTile[] array1 = this._targets.ToArray();
+      GMareTile[] array2 = this._swaps.ToArray();
       if (array2[0] == array1[0])
         return;
       int num1 = 0;
@@ -621,6 +643,8 @@ namespace GMare.Controls
       if (ignoreUpdate)
         return;
       this.UpdateBackBuffer();
+
+    */
     }
 
     public Bitmap GetImage()

@@ -370,18 +370,18 @@ namespace GMare.Objects
         /// Gets the tile ids within the grid as an array
         /// </summary>
         /// <returns>An array of tile ids</returns>
-        public int[] ToArray()
+        public GMareTile[] ToArray()
         {
             // Create a new array of tile ids
             int index = 0;
-            int[] ids = new int[Columns * Rows];
+            GMareTile[] ids = new GMareTile[Columns * Rows];
 
             // Iterate through tile ids.
             for (int row = 0; row < _tiles.GetLength(1); row++)
             {
                 for (int col = 0; col < _tiles.GetLength(0); col++)
                 {
-                    ids[index] = _tiles[col, row].TileId;
+                    ids[index] = _tiles[col, row];
                     index++;
                 }
             }
@@ -394,15 +394,15 @@ namespace GMare.Objects
         /// Gets the tile ids within the grid as a 2D array
         /// </summary>
         /// <returns>An array of tile ids</returns>
-        public int[,] To2DArray()
+        public GMareTile[,] To2DArray()
         {
             // Create a new array of tile ids
-            int[,] ids = new int[Columns, Rows];
+            GMareTile[,] ids = new GMareTile[Columns, Rows];
 
             // Iterate through tile ids
             for (int row = 0; row < _tiles.GetLength(1); row++)
                 for (int col = 0; col < _tiles.GetLength(0); col++)
-                    ids[col, row] = _tiles[col, row].TileId;
+                    ids[col, row] = _tiles[col, row];
 
             // Return tile ids as an array
             return ids;
@@ -414,6 +414,13 @@ namespace GMare.Objects
         /// <returns>An array of tile ids</returns>
         public string To2DArrayString()
         {
+            // TileId Refactor
+            // TODO: not needed anymore?
+            // throw new NotImplementedException();
+            return string.Empty;
+
+            /*
+
             // Create a new array of tile ids
             StringBuilder sb = new StringBuilder();
             string line = string.Empty;
@@ -431,6 +438,7 @@ namespace GMare.Objects
 
             // Return tile ids as an array
             return sb.ToString();
+            */
         }
 
         /// <summary>
@@ -451,26 +459,6 @@ namespace GMare.Objects
 
             // Return the position of the tile id
             return new Point(x, y);
-        }
-
-        /// <summary>
-        /// Creates a tiled point from a tile id in columns and rows
-        /// </summary>
-        /// <param name="tileId">The tile id to calculate the position with</param>
-        /// <param name="width">The width of the source tileset</param>
-        /// <param name="tileSize">The size of one tile</param>
-        /// <returns>The tile id's grid position on the tileset</returns>
-        public static Point TileIdToSourceGridPosition(int tileId, int width, Size tileSize)
-        {
-            // Calculate the number of columns the tileset has
-            int cols = width / tileSize.Width;
-
-            // Calculate the poisition coordinates
-            int x = (tileId - (tileId / cols) * cols) * tileSize.Width;
-            int y = (tileId / cols) * tileSize.Height;
-
-            // Return the position of the tile id
-            return new Point(x / tileSize.Width, y / tileSize.Height);
         }
 
         /// <summary>
@@ -529,7 +517,10 @@ namespace GMare.Objects
 
                     // Create new tile
                     GMareTile tile = new GMareTile();
-                    tile.TileId = PositionToSourceTileId(x, y, width, tileSize);
+                    tile.TileX = x;
+                    tile.TileX = y;
+                    tile.TileWidth = tileSize.Width;
+                    tile.TileHeight = tileSize.Height;
 
                     // Set tile
                     tiles[col, row] = tile;
@@ -546,7 +537,7 @@ namespace GMare.Objects
         /// <param name="rectangle">The source rectangle to copy tiles from</param>
         /// <param name="width">The width of the source tileset</param>
         /// <returns>A new tile brush</returns>
-        public static GMareBrush RectangleToTileBrush(Rectangle rectangle, int width, Size tileSize)
+        public static GMareBrush RectangleToTileBrush(Rectangle rectangle, GMareBackground background)
         {
             GMareBrush brush = new GMareBrush();
 
@@ -554,9 +545,12 @@ namespace GMare.Objects
             int x = 0;
             int y = 0;
 
+            int colOrigin = rectangle.X / background.TileWidth;
+            int rowOrigin = rectangle.Y / background.TileHeight;
+
             // Calculate columns and rows
-            int cols = rectangle.Width / tileSize.Width;
-            int rows = rectangle.Height / tileSize.Height;
+            int cols = rectangle.Width / background.TileWidth;
+            int rows = rectangle.Height / background.TileHeight;
 
             // Create a new tile id array
             GMareTile[,] tiles = new GMareTile[cols, rows];
@@ -568,12 +562,15 @@ namespace GMare.Objects
                 for (int row = 0; row < rows; row++)
                 {
                     // Calculate tile position.
-                    x = (col * tileSize.Width) + rectangle.X;
-                    y = (row * tileSize.Height) + rectangle.Y;
+                    x = background.OffsetX + (col * background.TileWidth) + (colOrigin * background.SeparationX) + rectangle.X;
+                    y = background.OffsetY + (row * background.TileHeight) + (rowOrigin * background.SeparationY) + rectangle.Y;
 
                     // Create new tile
                     GMareTile tile = new GMareTile();
-                    tile.TileId = PositionToSourceTileId(x, y, width, tileSize);
+                    tile.TileX = x;
+                    tile.TileY = y;
+                    tile.TileWidth = background.TileWidth;
+                    tile.TileHeight = background.TileHeight;
 
                     // Set tile
                     tiles[col, row] = tile;
@@ -647,12 +644,12 @@ namespace GMare.Objects
         /// </summary>
         /// <param name="tileId">The given tile id to search for</param>
         /// <returns>If the brush contains the given tile id</returns>
-        public bool Contains(int tileId)
+        public bool Contains(GMareTile tile)
         {
             // Iterate through tile ids
             for (int row = 0; row < _tiles.GetLength(1); row++)
                 for (int col = 0; col < _tiles.GetLength(0); col++)
-                    if (tileId == _tiles[col, row].TileId)
+                    if (tile == _tiles[col, row])
                         return true;
 
             // Tile id not found
@@ -674,7 +671,7 @@ namespace GMare.Objects
             // Iterate through tile ids
             for (int row = 0; row < _tiles.GetLength(1); row++)
                 for (int col = 0; col < _tiles.GetLength(0); col++)
-                    if (brush.Tiles[col, row].TileId != _tiles[col, row].TileId)
+                    if (brush.Tiles[col, row] != _tiles[col, row])
                         return false;
 
             // Tiles match

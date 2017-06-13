@@ -40,7 +40,6 @@ namespace GMare.Graphics
 
         private int[,] _pixels = null; // Pixel data.
         private uint _textureId = 0;   // OpenGL texture id.
-        private int _textureSize = 0;  // The size of the texture in powers of 2.
         private int _width = 0;        // Original image width.
         private int _height = 0;       // Original image height.
 
@@ -56,13 +55,6 @@ namespace GMare.Graphics
             get { return _textureId; }
         }
 
-        /// <summary>
-        /// The size of the texture within OpenGL. (Powers of 2)
-        /// </summary>
-        public int TextureSize
-        {
-            get { return _textureSize; }
-        }
 
         /// <summary>
         /// The width of the original image this texture derives from in pixels.
@@ -139,16 +131,16 @@ namespace GMare.Graphics
             _height = pixelMap.Height;
 
             // Get a power of 2
-            if (_width > _height)
-                _textureSize = MathMethods.Pow(_width, 2);
-            else
-                _textureSize = MathMethods.Pow(_height, 2);
+            //if (_width > _height)
+            //    _textureSize = MathMethods.Pow(_width, 2);
+            //else
+            //    _textureSize = MathMethods.Pow(_height, 2);
 
             // Copy the pixel map and resize it
-            PixelMap copy = new PixelMap(_textureSize, _textureSize, Color.Black);
-            copy.Paste(pixelMap, 0, 0);
+            // PixelMap copy = new PixelMap(_textureSize, _textureSize, Color.Black);
+            // copy.Paste(pixelMap, 0, 0);
 
-            byte[] data = copy.ToOpenGLTexture();
+            byte[] data = pixelMap.ToOpenGLTexture();
 
             // Get texture pointer
             fixed (uint* id = &_textureId) { OpenGL.glGenTextures(1, id); }
@@ -169,7 +161,7 @@ namespace GMare.Graphics
 
                 
                 // Place data into video memory
-                OpenGL.glTexImage2D(GLTexture.Texture2D, 0, GLInternalFormat.RGBA8, _textureSize, _textureSize, 0, GLPixelFormat.RGBA, GLDataType.UnsignedByte, textureData);
+                OpenGL.glTexImage2D(GLTexture.Texture2D, 0, GLInternalFormat.RGBA8, Width, Height, 0, GLPixelFormat.RGBA, GLDataType.UnsignedByte, textureData);
 
                 // Deallocate native memory
                 Marshal.FreeHGlobal(textureData);

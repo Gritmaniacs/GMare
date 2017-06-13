@@ -49,7 +49,7 @@ namespace GMare.Graphics
         };
         private static readonly Stack<Line> _lines = new Stack<Line>();                           // A list of drawing lines.
         private static List<Quad> _quads = new List<Quad>();                                      // A list of drawing quads.
-        private static List<ResTexture[,]> _tileMaps = new List<ResTexture[,]>();                 // Room's tiles.
+        private static List<ResTexture> _tileMaps = new List<ResTexture>();                 // Room's tiles.
         private static GraphicsCanvas _canvas = null;                                             // Rendering canvas.
         private static Dictionary<int, ResTexture> _sprites = new Dictionary<int, ResTexture>();  // A dictionary of sprites.
         private static BlendType _blendMode = BlendType.Alpha;                                    // Renderer's blend mode.
@@ -129,7 +129,7 @@ namespace GMare.Graphics
         /// <summary>
         /// Gets the rendering tile maps.
         /// </summary>
-        public static List<ResTexture[,]> TileMaps
+        public static List<ResTexture> TileMaps
         {
             get { return _tileMaps; }
         }
@@ -510,7 +510,7 @@ namespace GMare.Graphics
                 return;
 
             // Add a textured quad.
-            Quad quad = new Quad(texture, new PointF(x, y), new PointF(1, 1), 0, color);
+            Quad quad = new Quad(texture, new RectangleF(x, y, texture.Width, texture.Height), new RectangleF(0, 0, texture.Width, texture.Height), new PointF(1, 1), 0, color);
 
             OpenGL.glEnable(GLOption.Texture2D);
             OpenGL.glPolygonMode(GLPolygonFaces.Back, GLPolygonMode.Fill);
@@ -551,7 +551,7 @@ namespace GMare.Graphics
                 return;
 
             // Add a textured quad.
-            _quads.Add(new Quad(texture, new PointF(x, y), new PointF(1, 1), 0, color));
+            _quads.Add(new Quad(texture, new RectangleF(x, y, texture.Width, texture.Height), new RectangleF(0, 0, texture.Width, texture.Height), new PointF(1, 1), 0, color));
         }
 
         /// <summary>
@@ -559,10 +559,10 @@ namespace GMare.Graphics
         /// </summary>
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
-        public static void DrawTile(ResTexture texture, int x, int y, float scaleX, float scaleY, float rotation, Color color)
+        public static void DrawTile(ResTexture texture, int x, int y, Rectangle sourceRectangle, float scaleX, float scaleY, float rotation, Color color)
         {
             // Add a textured quad.
-            _quads.Add(new Quad(texture, new PointF(x, y), new PointF(scaleX, scaleY), rotation, color));
+            _quads.Add(new Quad(texture, new RectangleF(x, y, sourceRectangle.Width, sourceRectangle.Height), new RectangleF(sourceRectangle.X, sourceRectangle.Y, sourceRectangle.Width, sourceRectangle.Height), new PointF(scaleX, scaleY), rotation, color));
         }
 
         /// <summary>
@@ -667,9 +667,7 @@ namespace GMare.Graphics
 
             // Iterate through textures, and dispose of them
             for (int i = 0; i < _tileMaps.Count; i++)
-                for (int x = 0; x < _tileMaps[i].GetLength(0); x++)
-                    for (int y = 0; y < _tileMaps[i].GetLength(1); y++)
-                        _tileMaps[i][x, y].Dispose();
+                _tileMaps[i].Dispose();
 
             // Clear elements
             _tileMaps.Clear();
@@ -679,28 +677,10 @@ namespace GMare.Graphics
         /// Loads a tile map from a bitmap
         /// </summary>
         /// <param name="bitmap">The bitmap to create a tile map from.</param>
-        public static void LoadTileMap(Bitmap image, int tileWidth, int tileHeight)
+        public static void LoadTileMap(Bitmap image)
         {
-            // Get the columns and row amount for the tile grid
-            int cols = image.Width / tileWidth;
-            int rows = image.Height / tileHeight;
-
             // Create a new texture grid
-            ResTexture[,] map = new ResTexture[cols, rows];
-
-            // Iterate through columns
-            for (int col = 0; col < cols; col++)
-            {
-                // Iterate through rows
-                for (int row = 0; row < rows; row++)
-                {
-                    // Copy image part rectangle
-                    Rectangle rect = new Rectangle(col * tileWidth, row * tileHeight, tileWidth, tileHeight);
-
-                    // Create tile texture
-                    map[col, row] = new ResTexture(image.Clone(rect, image.PixelFormat));
-                }
-            }
+            ResTexture map = new ResTexture(image);
             
             // Add tile map
             _tileMaps.Add(map);

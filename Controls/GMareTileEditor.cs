@@ -213,6 +213,12 @@ namespace GMare.Controls
         /// </summary>
         private void mnuClear_Click(object sender, EventArgs e)
         {
+            // TileId Refactor
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
+            /*
+
             // If targets are empty, return
             if (_targets == null)
                 return;
@@ -221,7 +227,7 @@ namespace GMare.Controls
             PanelChanged();
 
             // Get tile ids
-            int[] tiles = _targets.ToArray();
+            GMareTile[] tiles = _targets.ToArray();
 
             // Iterate through tiles
             foreach (int tile in tiles)
@@ -244,6 +250,8 @@ namespace GMare.Controls
 
             // Update backbuffer
             UpdateBackBuffer();
+
+            */
         }
 
         #endregion
@@ -444,6 +452,12 @@ namespace GMare.Controls
         /// </summary>
         protected override void OnMouseUp(MouseEventArgs e)
         {
+            // TileId Refactor
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
+            /*
+
             // Allow others to hook this event
             base.OnMouseUp(e);
 
@@ -461,7 +475,7 @@ namespace GMare.Controls
                 _targets.Tiles = GMareBrush.RectangleToTiles(_targets.ToTargetRectangle(), TilesetWidth, SnapSize);
 
                 // Get target tiles
-                int[] tiles = _targets.ToArray();
+                GMareTile[] tiles = _targets.ToArray();
 
                 // Check if all selected tiles are valid
                 foreach (int tile in tiles)
@@ -502,7 +516,7 @@ namespace GMare.Controls
                 _targets.Tiles = GMareBrush.RectangleToTiles(_targets.ToTargetRectangle(), TilesetWidth, SnapSize);
 
                 // Get new target tiles
-                int[] tiles = _targets.ToArray();
+                GMareTile[] tiles = _targets.ToArray();
 
                 // Check to see if the drop is valid
                 foreach (int tile in tiles)
@@ -521,6 +535,8 @@ namespace GMare.Controls
                 // Swap tiles
                 SwapTiles();
             }
+
+            */
         }
 
         #endregion
@@ -677,13 +693,19 @@ namespace GMare.Controls
         /// </summary>
         private void SwapTiles()
         {
+            // TileId Refactor
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
+            /*
+
             // If the targets or swaps grids are empty, return
             if (_targets == null || _swaps == null)
                 return;
 
             // Get tile arrays.
-            int[] targets = _targets.ToArray();
-            int[] swaps = _swaps.ToArray();
+            GMareTile[] targets = _targets.ToArray();
+            GMareTile[] swaps = _swaps.ToArray();
 
             // If the swaps are the same as the targets, return
             if (swaps[0] == targets[0])
@@ -739,6 +761,8 @@ namespace GMare.Controls
 
             // Redraw backbuffer
             UpdateBackBuffer();
+
+    */
         }
 
         /// <summary>

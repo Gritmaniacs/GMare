@@ -88,11 +88,13 @@ namespace GMare.Forms
                 for (int row = 0; row < brush.Rows; row++)
                 {
                     // If the tile is empty, continue looping
-                    if (brush.Tiles[col, row].TileId == -1)
+                    if (brush.Tiles[col, row].IsEmpty)
                         continue;
 
+                    var tile = brush.Tiles[col, row];
+
                     // Calculate source point
-                    Rectangle source = new Rectangle(GMareBrush.TileIdToSourcePosition(brush.Tiles[col, row].TileId, background.Width, tileSize), tileSize);
+                    Rectangle source = new Rectangle(tile.TileX, tile.TileY, tileSize.Width, tileSize.Height);
                     Rectangle dest = new Rectangle(new Point(col * tileSize.Width, row * tileSize.Height), tileSize);
 
                     // Get tile

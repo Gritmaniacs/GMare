@@ -645,6 +645,9 @@ namespace GMare.Forms
         /// </summary>
         public void WriteBinaryFile(string path)
         {
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
             // Create a new file stream
             using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
@@ -732,10 +735,11 @@ namespace GMare.Forms
                                         for (int col = 0; col < layer.Tiles.GetLength(0); col++)
                                         {
                                             // Write tile id
-                                            writer.Write((int)layer.Tiles[col, row].TileId);
+                                            // writer.Write((int)layer.Tiles[col, row].TileId);
+                                            writer.Write(0);
 
                                             // If the tile is empty, no need to put other data in
-                                            if (layer.Tiles[col, row].TileId == -1)
+                                            if (layer.Tiles[col, row].IsEmpty)
                                                 continue;
 
                                             // If flipping data is used

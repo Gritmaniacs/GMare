@@ -715,7 +715,7 @@ namespace GMare.Objects
             else
             {
                 // Get GM object based on id, set menu image
-                GMareObject obj = _objects.Find(delegate(GMareObject o) { return o.Resource.Id == node.Id; });
+                GMareObject obj = _objects.Find(delegate (GMareObject o) { return o.Resource.Id == node.Id; });
 
                 // If object is not null, set size for image, then assign it to menu image
                 if (obj != null)
@@ -787,7 +787,7 @@ namespace GMare.Objects
             List<int> depths = new List<int>();
 
             // Get all the instances with their depths
-            List<Tuple<int, GMareInstance>> instances = new List<Tuple<int,GMareInstance>>();
+            List<Tuple<int, GMareInstance>> instances = new List<Tuple<int, GMareInstance>>();
             foreach (GMareInstance instance in _instances)
             {
                 // Get the object depth
@@ -811,7 +811,7 @@ namespace GMare.Objects
                     depths.Add(layer.Depth);
 
             // Sort the used depths
-            depths.Sort(delegate(int p1, int p2) { return p2.CompareTo(p1); });
+            depths.Sort(delegate (int p1, int p2) { return p2.CompareTo(p1); });
 
             // Create image attributes
             using (ImageAttributes ia = new ImageAttributes())
@@ -832,10 +832,10 @@ namespace GMare.Objects
                             for (int row = 0; row < rows; row++)
                             {
                                 // Get tile id
-                                int tileId = layer.Tiles[col, row].TileId;
+                                var tile = layer.Tiles[col, row];
 
                                 // If the tile is empty, continue looping
-                                if (tileId == -1)
+                                if (tile.IsEmpty)
                                     continue;
 
                                 // Calculate destination rectangle
@@ -843,7 +843,7 @@ namespace GMare.Objects
                                 dest.Y = row * tileSize.Height;
 
                                 // Calculate source point
-                                source.Location = GMareBrush.TileIdToSourcePosition(tileId, background.Width, tileSize);
+                                source.Location = new Point(tile.TileX, tile.TileY);
 
                                 // Get tile
                                 Bitmap temp = Graphics.PixelMap.PixelDataToBitmap(Graphics.PixelMap.GetPixels(background, source));
@@ -1012,7 +1012,7 @@ namespace GMare.Objects
             // Merge top layer tiles to bottom layer tiles
             for (int x = 0; x < topLayer.Tiles.GetLength(0); x++)
                 for (int y = 0; y < topLayer.Tiles.GetLength(1); y++)
-                    if (topLayer.Tiles[x, y].TileId != -1)
+                    if (!topLayer.Tiles[x, y].IsEmpty)
                         bottomLayer.Tiles[x, y] = topLayer.Tiles[x, y].Clone();
 
             // Delete the top layer
@@ -1074,10 +1074,10 @@ namespace GMare.Objects
                         for (int col = 0; col < layer.Tiles.GetLength(0); col++)
                         {
                             // Get tile id
-                            int sector = layer.Tiles[col, row].TileId;
+                            var sector = layer.Tiles[col, row];
 
                             // If the tile is empty, continue
-                            if (sector == -1)
+                            if (sector.IsEmpty)
                                 continue;
 
                             PointF scale = GMareTile.GetScale(layer.Tiles[col, row].FlipMode);
@@ -1093,8 +1093,10 @@ namespace GMare.Objects
                             tile.Y = (row * _backgrounds[0].TileHeight) + flipOffset.Height;
                             tile.Width = _backgrounds[0].TileWidth;
                             tile.Height = _backgrounds[0].TileHeight;
-                            tile.BackgroundX = (sector - (sector / tileCols) * tileCols) * tileSize.Width;
-                            tile.BackgroundY = (sector / tileCols) * tileSize.Height;
+                            // tile.BackgroundX = (sector - (sector / tileCols) * tileCols) * tileSize.Width;
+                            // tile.BackgroundY = (sector / tileCols) * tileSize.Height;
+                            tile.BackgroundX = sector.TileX;
+                            tile.BackgroundY = sector.TileY;
                             tile.BackgroundX += ((tile.BackgroundX / tileSize.Width) * spacing.X) + offset.X;
                             tile.BackgroundY += ((tile.BackgroundY / tileSize.Height) * spacing.Y) + offset.Y;
                             tile.ScaleX = scale.X;
@@ -1123,6 +1125,12 @@ namespace GMare.Objects
         /// <param name="tileId">The tile id that the block instance resides on</param>
         public void AddBlock(int objectId, int tileId)
         {
+            // TileId Refactor
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
+            /*
+
             // If no background image return
             if (_backgrounds[0].Image == null)
                 return;
@@ -1190,6 +1198,7 @@ namespace GMare.Objects
                     }
                 }
             }
+            */
         }
 
         /// <summary>
@@ -1226,8 +1235,14 @@ namespace GMare.Objects
         /// </summary>
         public void UpdateBlockInstances()
         {
+            // TileId Refactor
+            // TODO: not needed anymore?
+            // throw new NotImplementedException();
+
+            /*
+
             // Remove all block instances
-            _instances.RemoveAll(delegate(GMareInstance i) { return i.TileId != -1; });
+            _instances.RemoveAll(delegate (GMareInstance i) { return i.TileId != -1; });
 
             // Iterate through blocks
             foreach (GMareInstance block in _blocks)
@@ -1241,7 +1256,7 @@ namespace GMare.Objects
                         for (int y = 0; y < layer.Tiles.GetLength(1); y++)
                         {
                             // Get the object associated with this instance
-                            GMareObject obj = App.Room.Objects.Find(delegate(GMareObject o) { return o.Resource.Id == block.ObjectId; });
+                            GMareObject obj = App.Room.Objects.Find(delegate (GMareObject o) { return o.Resource.Id == block.ObjectId; });
 
                             // If no object was found, return
                             if (obj == null)
@@ -1254,7 +1269,7 @@ namespace GMare.Objects
                                 Point pos = new Point(x * _backgrounds[0].TileSize.Width, y * _backgrounds[0].TileSize.Height);
 
                                 // If the same object already resides in this space, do not occupy it
-                                if (_instances.Find(delegate(GMareInstance i) { return i.ObjectId == block.ObjectId && i.X == pos.X && i.Y == pos.Y; }) != null)
+                                if (_instances.Find(delegate (GMareInstance i) { return i.ObjectId == block.ObjectId && i.X == pos.X && i.Y == pos.Y; }) != null)
                                     continue;
 
                                 // Create a new block instance
@@ -1272,6 +1287,7 @@ namespace GMare.Objects
                     }
                 }
             }
+            */
         }
 
         /// <summary>
@@ -1328,7 +1344,7 @@ namespace GMare.Objects
             for (int i = 0; i < _blocks.Count; i++)
                 if (_blocks[i].TileId >= targets.Length)
                     _blocks.RemoveAt(i);
-                    
+
         }
 
         #endregion
@@ -1431,7 +1447,7 @@ namespace GMare.Objects
         {
             // Get optimized tiles, then determine the best method
             tiles = tiles == null ? layer.GetExportTiles(background, true, -1) : tiles;
-            int filledTiles = Array.FindAll<GMareTile>(layer.Tiles.Cast<GMareTile>().ToArray(), t => t.TileId != -1).Length;
+            int filledTiles = Array.FindAll<GMareTile>(layer.Tiles.Cast<GMareTile>().ToArray(), t => !t.IsEmpty).Length;
             tiledSize = (layer.Tiles.Length * 4) + (filledTiles * (useFlipValues ? 1 : 0)) + (filledTiles * (useBlendColor ? 4 : 0));
             standardSize = (tiles.Length * (24 + (useFlipValues ? 1 : 0) + (useBlendColor ? 4 : 0))) + 4;
             BinaryMethodType method = (tiledSize > standardSize ? BinaryMethodType.Standard : BinaryMethodType.Tiled);
@@ -1734,13 +1750,13 @@ namespace GMare.Objects
         /// </summary>
         /// <param name="target">The target tile id to swap</param>
         /// <param name="replacement">The replacement tile id to replace the target</param>
-        public void Replace(int target, int replacement)
+        public void Replace(GMareTile target, GMareTile replacement)
         {
             // Iterate through tiles, if the iterated tile id matches the target, swap
             for (int col = 0; col < _tiles.GetLength(0); col++)
                 for (int row = 0; row < _tiles.GetLength(1); row++)
-                    if (_tiles[col, row].TileId == target)
-                        _tiles[col, row].TileId = replacement;
+                    if (_tiles[col, row] == target)
+                        _tiles[col, row] = replacement;
         }
 
         /// <summary>
@@ -1748,12 +1764,12 @@ namespace GMare.Objects
         /// </summary>
         /// <param name="target">The target tile grid to swap</param>
         /// <param name="replacement">The replacement tile id to replace the target</param>
-        public void Replace(GMareBrush target, int replacement)
+        public void Replace(GMareBrush target, GMareTile replacement)
         {
             // Iterate through tiles, if the iterated tile id matches the target, swap
             for (int col = 0; col < target.Tiles.GetLength(0); col++)
                 for (int row = 0; row < target.Tiles.GetLength(1); row++)
-                    Replace(target.Tiles[col, row].TileId, replacement);
+                    Replace(target.Tiles[col, row], replacement);
         }
 
         /// <summary>
@@ -1762,7 +1778,7 @@ namespace GMare.Objects
         /// <param name="targets">The target tile grid to swap</param>
         /// <param name="replacements">The replacement tile grid to replace the target</param>
         /// <param name="clear">If clearing all the tiles after the selction</param>
-        public void Replace(int[] targets, int[] replacements, bool clear)
+        public void Replace(GMareTile[] targets, GMareTile[] replacements, bool clear)
         {
             // If the source and target sizes are not the same return
             if (targets.Length != replacements.Length)
@@ -1777,7 +1793,7 @@ namespace GMare.Objects
             List<List<Point>> lists = new List<List<Point>>();
 
             // Iterate through tile ids in target array
-            foreach (int id in targets)
+            foreach (var id in targets)
             {
                 // Create a new point list
                 List<Point> points = new List<Point>();
@@ -1785,7 +1801,7 @@ namespace GMare.Objects
                 // Iterate through layer columns, if the iterated tile id matches the target, add point
                 for (int x = 0; x < _tiles.GetLength(0); x++)
                     for (int y = 0; y < _tiles.GetLength(1); y++)
-                        if (_tiles[x, y].TileId == id && !(_tiles[x, y].TileId == -1 && id == -1))
+                        if (_tiles[x, y] == id && !_tiles[x, y].IsEmpty && !id.IsEmpty)
                             points.Add(new Point(x, y));
 
                 // Add point list
@@ -1795,14 +1811,24 @@ namespace GMare.Objects
             // Iterate through point lists, replace tile id
             for (int i = 0; i < lists.Count; i++)
                 foreach (Point point in lists[i])
-                    _tiles[point.X, point.Y].TileId = replacements[i];
+                    _tiles[point.X, point.Y] = replacements[i];
 
             // If clearing tiles that are beyond the target tiles
             if (clear)
+            {
+                // TileId Refactor
+                // TODO: not needed anymore?
+                throw new NotImplementedException();
+
+                /*
+
                 for (int row = 0; row < _tiles.GetLength(1); row++)
                     for (int col = 0; col < _tiles.GetLength(0); col++)
                         if (_tiles[col, row].TileId >= targets.Length)
                             _tiles[col, row].TileId = -1;
+
+            */
+            }
         }
 
         /// <summary>
@@ -1810,12 +1836,11 @@ namespace GMare.Objects
         /// </summary>
         /// <param name="origin">The starting point for the fill, in tiles</param>
         /// <param name="tileId">The tile id to fill with</param>
-        public void Fill(Point origin, int tileId)
+        public void Fill(Point origin, GMareTile tile)
         {
             // Create a new array of tiles
             GMareTile[,] tiles = new GMareTile[1, 1];
-            tiles[0, 0] = new GMareTile();
-            tiles[0, 0].TileId = tileId;
+            tiles[0, 0] = tile;
 
             // Fill with tile array
             Fill(origin, tiles);
@@ -1833,7 +1858,7 @@ namespace GMare.Objects
                 return;
 
             // Get target tile
-            int target = _tiles[origin.X, origin.Y].TileId;
+            var target = _tiles[origin.X, origin.Y];
 
             // Get the valid fill array
             bool[,] mask = this.GetFillMask(origin, target);
@@ -1861,7 +1886,7 @@ namespace GMare.Objects
                 for (int row = 0; row < _tiles.GetLength(1); row++)
                 {
                     // If the coordinate values are allowed by the mask and equal the target, replace the tile
-                    if (mask[col, row] == true && _tiles[col, row].TileId == target)
+                    if (mask[col, row] == true && _tiles[col, row] == target)
                         _tiles[col, row] = tiles[x, y].Clone();
 
                     // Increment selection's row index
@@ -1895,7 +1920,7 @@ namespace GMare.Objects
         /// <param name="origin">The starting point for the fill, in tiles</param>
         /// <param name="target">The target that will be compared</param>
         /// <returns>The valid fill area of a layer</returns>
-        private bool[,] GetFillMask(Point origin, int target)
+        private bool[,] GetFillMask(Point origin, GMareTile target)
         {
             // Create an array of booleans
             bool[,] mask = new bool[_tiles.GetLength(0), _tiles.GetLength(1)];
@@ -1918,21 +1943,21 @@ namespace GMare.Objects
                 Point check = (Point)checks.Dequeue();
 
                 // If the check point value equals the target value
-                if (_tiles[check.X, check.Y].TileId == target)
+                if (_tiles[check.X, check.Y] == target)
                 {
                     // Create linear check points
                     int west = check.X;
                     int east = check.X;
 
                     // While we're not out of bounds, and the target matches the point, set west coordinate
-                    while (west > -1 && _tiles[west, check.Y].TileId == target && mask[west, check.Y] == false)
+                    while (west > -1 && _tiles[west, check.Y] == target && mask[west, check.Y] == false)
                     {
                         // Deincrement west coordinate
                         west--;
                     }
 
                     // While we're not out of bounds, and the target matches the point, set east coordinate
-                    while (east < _tiles.GetLength(0) && _tiles[east, check.Y].TileId == target && mask[east, check.Y] == false)
+                    while (east < _tiles.GetLength(0) && _tiles[east, check.Y] == target && mask[east, check.Y] == false)
                     {
                         // Increment east coordinate
                         east++;
@@ -1949,11 +1974,11 @@ namespace GMare.Objects
                         int down = check.Y + 1;
 
                         // If within bounds, if the tile above matches the target, and not already set, add point to queue
-                        if (up > -1 && _tiles[west, up].TileId == target && mask[west, up] == false)
+                        if (up > -1 && _tiles[west, up] == target && mask[west, up] == false)
                             checks.Enqueue(new Point(west, check.Y - 1));
 
                         // If within bounds, if the tile below matches the target, and not already set, add point to queue
-                        if (down < _tiles.GetLength(1) && _tiles[west, down].TileId == target && mask[west, down] == false)
+                        if (down < _tiles.GetLength(1) && _tiles[west, down] == target && mask[west, down] == false)
                             checks.Enqueue(new Point(west, check.Y + 1));
                     }
                 }
@@ -2004,10 +2029,10 @@ namespace GMare.Objects
                 for (int row = 0; row < rows; row++)
                 {
                     // Get tile id
-                    int tileId = _tiles[col, row].TileId;
+                    var tile = _tiles[col, row];
 
                     // If the tile is empty, continue looping
-                    if (tileId == -1)
+                    if (tile.IsEmpty)
                         continue;
 
                     // Calculate destination rectangle
@@ -2015,7 +2040,7 @@ namespace GMare.Objects
                     dest.Y = row * tileSize.Height;
 
                     // Calculate source point
-                    source.Location = GMareBrush.TileIdToSourcePosition(tileId, backgroundImage.Width, tileSize);
+                    source.Location = new Point(tile.TileX, tile.TileY);
 
                     // Get tile
                     Bitmap temp = Graphics.PixelMap.PixelDataToBitmap(Graphics.PixelMap.GetPixels(backgroundImage, source));
@@ -2067,6 +2092,12 @@ namespace GMare.Objects
         /// <returns>An array of binary tiles</returns>
         public ExportTile[] GetExportTiles(GMareBackground background, bool forBinary, int lastId)
         {
+            // TileId refactor
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
+            /*
+
             // If the background is empty or background image is empty, return
             if (background == null || background.Image == null)
                 return null;
@@ -2172,6 +2203,8 @@ namespace GMare.Objects
 
             // Return a list of copy rectangles
             return tiles.ToArray();
+
+            */
         }
 
         #endregion
@@ -2560,6 +2593,14 @@ namespace GMare.Objects
             return new Point(x, y);
         }
 
+        public Bitmap GetTileset()
+        {
+            if (_image == null)
+                return null;
+
+            return _image.ToBitmap();
+        }
+
         /// <summary>
         /// Gets a bitmap condensed by background tile options
         /// </summary>
@@ -2696,14 +2737,18 @@ namespace GMare.Objects
     /// Tile class that defines tile data
     /// </summary>
     [Serializable]
-    public class GMareTile
+    public class GMareTile : IEquatable<GMareTile>
     {
         #region Fields
 
         private Color _blend = Color.White;      // The blend color
         private FlipType _flip = FlipType.None;  // Flip mode
-        private int _tileId = -1;                // The source tile id
         private int _backgroundId = -1;          // Background id used for this tile
+
+        private int _tileX = 0;
+        private int _tileY = 0;
+        private int _tileWidth = 0;
+        private int _tileHeight = 0;
 
         #endregion
 
@@ -2729,13 +2774,29 @@ namespace GMare.Objects
             set { _blend = Color.FromArgb(value); }
         }
 
-        /// <summary>
-        /// Gets or sets the source tile from a background
-        /// </summary>
-        public int TileId
+
+        public int TileX
         {
-            get { return _tileId; }
-            set { _tileId = value; }
+            get { return _tileX; }
+            set { _tileX = value; }
+        }
+
+        public int TileY
+        {
+            get { return _tileY; }
+            set { _tileY = value; }
+        }
+
+        public int TileWidth
+        {
+            get { return _tileWidth; }
+            set { _tileWidth = value; }
+        }
+
+        public int TileHeight
+        {
+            get { return _tileHeight; }
+            set { _tileHeight = value; }
         }
 
         /// <summary>
@@ -2860,6 +2921,14 @@ namespace GMare.Objects
             }
         }
 
+        public bool IsEmpty
+        {
+            get
+            {
+                return TileWidth <= 0 || TileHeight <= 0;
+            }
+        }
+
         #endregion
 
         #region Overrides
@@ -2870,7 +2939,59 @@ namespace GMare.Objects
         /// <returns>A string representing a tile object</returns>
         public override string ToString()
         {
-            return "Tile Id: " + _tileId + " | Flip Mode: " + _flip.ToString();
+            return "Tile X: " + TileX + " | Tile Y: " +  TileY + " | Flip Mode: " + _flip.ToString();
+        }
+
+        public bool Equals(GMareTile other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return 
+                this.TileX == other.TileX &&
+                this.TileY == other.TileY &&
+                this.TileWidth == other.TileWidth &&
+                this.TileHeight == other.TileHeight;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var otherTile = obj as GMareTile;
+
+            if (otherTile == null)
+            {
+                return false;
+            }
+
+            return Equals(otherTile);
+        }
+
+        public static bool operator ==(GMareTile tile, GMareTile otherTile)
+        {
+            if (((object)tile) == null || ((object)otherTile) == null)
+                return Object.Equals(tile, otherTile);
+
+            return tile.Equals(otherTile);
+        }
+
+        public static bool operator !=(GMareTile tile, GMareTile otherTile)
+        {
+            if (((object)tile) == null || ((object)otherTile) == null)
+                return !Object.Equals(tile, otherTile);
+
+            return !(tile.Equals(otherTile));
+        }
+
+        public void Clear()
+        {
+            TileX = TileY = TileWidth = TileHeight = 0;
         }
 
         #endregion
