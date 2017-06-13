@@ -267,6 +267,13 @@ namespace GMare.Forms
         /// </summary>
         private void butOk_Click(object sender, EventArgs e)
         {
+            // TileId Refactor
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
+
+            /*
+
             // If no tiles, return
             if (pnlTileset.Tiles.Count == 0)
             {
@@ -298,6 +305,8 @@ namespace GMare.Forms
 
             // Set dialog result
             DialogResult = DialogResult.OK;
+
+    */
         }
 
         /// <summary>
@@ -317,6 +326,9 @@ namespace GMare.Forms
         /// </summary>
         private void bgwCompile_DoWork(object sender, DoWorkEventArgs e)
         {
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
             // Hook into background worker for any cancellations
             BackgroundWorker bw = sender as BackgroundWorker;
 
@@ -378,7 +390,8 @@ namespace GMare.Forms
                             match = true;
 
                             // Set tile id, which is the same as the tile's index at this point
-                            layer.Tiles[col, row].TileId = j;
+                            // TileId refactor
+                            // layer.Tiles[col, row].TileId = j;
                             break;
                         }
                     }
@@ -387,7 +400,8 @@ namespace GMare.Forms
                     if (match == false)
                     {
                         // New tile id
-                        layer.Tiles[col, row].TileId = imageData.Count;
+                        // TileId refactor
+                        // layer.Tiles[col, row].TileId = imageData.Count;
 
                         // Add tile to unique tile list
                         imageData.Add(compare);

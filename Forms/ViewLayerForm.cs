@@ -176,6 +176,9 @@ namespace GMare.Forms
         /// <param name="arrayType">The type of array style to use when writing the string</param>
         private void SetText(GMareLayer layer, DataType dataType, ArrayType arrayType)
         {
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
             // If no layers, display nothing
             if (layer == null)
                 return;
@@ -258,6 +261,8 @@ namespace GMare.Forms
                         // If sector data must be displayed
                         case DataType.Sectors:
                             // Set sector data text based on desired array type
+                            // TileId refactor
+                            /*
                             switch (arrayType)
                             {
                                 case ArrayType.Raw: line.Append((layer.Tiles[col, row].TileId).ToString() + ", "); break;
@@ -265,13 +270,16 @@ namespace GMare.Forms
                                 case ArrayType.List: line.Append("ds_list_add(" + layerId + "," + layer.Tiles[col, row].TileId.ToString() + "); "); break;
                                 case ArrayType.Grid: line.Append("ds_grid_add(" + layerId + "," + col + "," + row + "," + layer.Tiles[col, row].TileId.ToString() + "); "); break;
                             }
+                            */
 
                             break;
 
                         // If point data must be displayed
                         case DataType.Points:
+                            // TileId refactor
+                            /*
                             // If the tile id is -1, don't bother with rectangle data
-                            if (layer.Tiles[col, row].TileId == -1)
+                            if (layer.Tiles[col, row].IsEmpty)
                                 continue;
 
                             // Create a new rectangle that represents the source rectangle
@@ -299,13 +307,16 @@ namespace GMare.Forms
                                     text.AppendLine("ds_list_add(" + layerId + ", " + point.Y + "); " + " // Source Y.");
                                     break;
                             }
+                            */
 
                             break;
 
                         // If rectangle data must be displayed
                         case DataType.Rectangles:
+                            // TileId refactor
+                            /*
                             // If the tile id is -1, don't bother with rectangle data
-                            if (layer.Tiles[col, row].TileId == -1)
+                            if (layer.Tiles[col, row].IsEmpty)
                                 continue;
 
                             // Create a new rectangle that represents the source rectangle
@@ -339,6 +350,7 @@ namespace GMare.Forms
                                     text.AppendLine("ds_list_add(" + layerId + "," + rect.Height + "); " + " // Tile Height.");
                                     break;
                             }
+                            */
 
                             break;
                     }
@@ -367,7 +379,7 @@ namespace GMare.Forms
             // Iterate through tiles, searching for non-empty tiles
             for (int row = 0; row < rows; row++)
                 for (int col = 0; col < cols; col++)
-                    if (tiles[col, row].TileId != -1)
+                    if (!tiles[col, row].IsEmpty)
                         return true;
 
             // No tiles in the tile array

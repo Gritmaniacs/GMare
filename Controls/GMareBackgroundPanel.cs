@@ -337,12 +337,14 @@ namespace GMare.Controls
                         cell.X = (int)(col * SnapSize.Width);
                         cell.Y = (int)(row * SnapSize.Height);
 
+                        // TODO: restore this
+                        // TileId refactor
                         // If the highlight brush does not contain the iterated tile id, continue
-                        if (!_highlighter.Contains(GMareBrush.PositionToSourceTileId(cell.X, cell.Y, Image.Width, SnapSize)))
-                            continue;
+                        // if (!_highlighter.Contains(GMareBrush.PositionToSourceTileId(cell.X, cell.Y, Image.Width, SnapSize)))
+                        //    continue;
 
                         // Draw highlight
-                        gfx.FillRectangle(highlighter, cell);
+                        //gfx.FillRectangle(highlighter, cell);
                     }
                 }
             }

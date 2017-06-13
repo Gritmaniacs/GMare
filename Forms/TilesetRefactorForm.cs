@@ -40,8 +40,8 @@ namespace GMare.Forms
     private ToolStripStatusLabel lblTilesetSize;
     private UndoRedoHistory<ITilesOwner> _history;
     private GMareBackground _background;
-    private int[] _targets;
-    private int[] _replacements;
+    private GMareTile[] _targets;
+    private GMareTile[] _replacements;
     private bool _changed;
 
     public TileData Data
@@ -66,7 +66,7 @@ namespace GMare.Forms
       }
     }
 
-    public int[] Targets
+    public GMareTile[] Targets
     {
       get
       {
@@ -74,7 +74,7 @@ namespace GMare.Forms
       }
     }
 
-    public int[] Replacements
+    public GMareTile[] Replacements
     {
       get
       {
@@ -468,12 +468,19 @@ namespace GMare.Forms
 
     private void butOk_Click(object sender, EventArgs e)
     {
-      if (this._originalSize.Width != this.pnlTileset.TilesetWidth || this._originalSize.Height != this.pnlTileset.TilesetHeight)
+            // TileId Refactor
+            // TODO: not needed anymore?
+            throw new NotImplementedException();
+
+            /*
+
+            if (this._originalSize.Width != this.pnlTileset.TilesetWidth || this._originalSize.Height != this.pnlTileset.TilesetHeight)
         this._changed = true;
       this._targets = this.pnlTileset.Targets.ToArray();
       this._replacements = this.pnlTileset.Replacements.ToArray();
       this._background.Image = new PixelMap(this.pnlTileset.GetImage(this._background.Offset, this._background.Separation));
       this.DialogResult = DialogResult.OK;
+      */
     }
 
     private void butCancel_Click(object sender, EventArgs e)

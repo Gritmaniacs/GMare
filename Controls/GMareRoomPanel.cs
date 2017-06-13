@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using GMare.Forms;
 using GMare.Objects;
 using GMare.Graphics;
+using System.Linq;
 
 namespace GMare.Controls
 {
@@ -746,7 +747,7 @@ namespace GMare.Controls
                     foreach (GMareTile tile in _brush.Tiles)
                     {
                         // If the tile is not empty, set blend
-                        if (tile.TileId != -1)
+                        if (!tile.IsEmpty)
                             tile.Blend = form.Color;
                     }
 
@@ -1074,7 +1075,7 @@ namespace GMare.Controls
                     foreach (GMareTile tile in _selection.Tiles)
                     {
                         // If the tile is not empty, set blend
-                        if (tile.TileId != -1)
+                        if (!tile.IsEmpty)
                             tile.Blend = form.Color;
                     }
 
@@ -1950,7 +1951,6 @@ namespace GMare.Controls
             Size tileSize = _background.TileSize;
             int layers = App.Room.Layers.Count - 1;
             int depth = 0;
-            int tileId = -1;
             Rectangle tileRect = new Rectangle(0, 0, tileSize.Width, tileSize.Height);
             List<Rectangle> highlights = new List<Rectangle>();
             Point source = Point.Empty;
@@ -1965,15 +1965,17 @@ namespace GMare.Controls
             cols = cols > App.Room.Columns ? App.Room.Columns : cols;
             rows = rows > App.Room.Rows ? App.Room.Rows : rows;
 
+            var orderedLayers = App.Room.Layers.OrderByDescending(l => l.Depth);
+
             // Iterate through layers
-            for (int layer = layers; layer > -1; layer--)
+            foreach (var layer in orderedLayers)
             {
                 // If the layer is not visible, skip
-                if (App.Room.Layers[layer].Visible == false)
+                if (!layer.Visible)
                     continue;
 
                 // Get layer depth
-                depth = App.Room.Layers[layer].Depth;
+                depth = layer.Depth;
 
                 // Set the blend mode based on drawing depth
                 index = _opaque && _editMode == EditType.Layers ? 0 : GetIndex(depth);
@@ -1985,11 +1987,10 @@ namespace GMare.Controls
                     for (int row = (Offset.Y / tileSize.Height); row < rows; row++)
                     {
                         // Get tile id
-                        tile = App.Room.Layers[layer].Tiles[col, row];
-                        tileId = tile.TileId;
+                        tile = layer.Tiles[col, row];
 
                         // If the tile is empty, continue looping
-                        if (tileId == -1)
+                        if (tile.IsEmpty)
                             continue;
 
                         // Calculate destination rectangle
@@ -2001,7 +2002,7 @@ namespace GMare.Controls
                             continue;
 
                         // Calculate source point
-                        source = GMareBrush.TileIdToSourceGridPosition(tileId, backgroundGridSize.Width * tileSize.Width, tileSize);
+                        source = new Point(tile.TileX / tileSize.Width, tile.TileY / tileSize.Height);
 
                         // Scaling values
                         scale = tile.GetScale();
@@ -2011,7 +2012,7 @@ namespace GMare.Controls
                             GraphicsManager.DrawTile(GraphicsManager.TileMaps[index][source.X, source.Y], tileRect.X, tileRect.Y, scale.X, scale.Y, 0, tile.Blend);
 
                         // If highlighting and the brush contains the tile id, add point
-                        if (_highlighter != null && _highlighter.Contains(tileId))
+                        if (_highlighter != null && _highlighter.Contains(tile))
                         {
                             highlight.X = tileRect.X;
                             highlight.Y = tileRect.Y;
@@ -2243,8 +2244,10 @@ namespace GMare.Controls
                 // Iterate through tiles vertically
                 for (int row = 0; row < _brush.Rows; row++)
                 {
+                    var tile = _brush.Tiles[col, row];
+
                     // Calculate source point
-                    source = GMareBrush.TileIdToSourceGridPosition(_brush.Tiles[col, row].TileId, _backgroundWidth, tileSize);
+                    source = new Point(tile.TileX / tileSize.Width, tile.TileY / tileSize.Height);
                     position.X = _posX + col * tileSize.Width;
                     position.Y = _posY + row * tileSize.Height;
 
@@ -2373,11 +2376,13 @@ namespace GMare.Controls
                         continue;
 
                     // Calculate source point
-                    if (_selection.Tiles[col, row].TileId == -1)
+                    if (_selection.Tiles[col, row].IsEmpty)
                         continue;
 
+                    var tile = _selection.Tiles[col, row];
+
                     // Calculate source point
-                    source = GMareBrush.TileIdToSourceGridPosition(_selection.Tiles[col, row].TileId, _backgroundWidth, tileSize);
+                    source = new Point(tile.TileX / tileSize.Width, tile.TileY / tileSize.Height);
                     position.X = _selection.ToTargetRectangle().X + col * tileSize.Width;
                     position.Y = _selection.ToTargetRectangle().Y + row * tileSize.Height;
 
@@ -3122,7 +3127,7 @@ namespace GMare.Controls
 
                         // If the shift key is being held down, erase tiles else, fill with brush
                         if (_shiftKey)
-                            App.Room.Layers[_layerIndex].Fill(tile, -1);
+                            App.Room.Layers[_layerIndex].Fill(tile, new GMareTile());
                         else
                             App.Room.Layers[_layerIndex].Fill(tile, _brush.Tiles);
 

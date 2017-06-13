@@ -162,7 +162,9 @@ namespace GMare.Forms
                 // Set tile grid to empty tiles
                 for (int x = 0; x < _swap.Tiles.GetLength(0); x++)
                     for (int y = 0; y < _swap.Tiles.GetLength(0); y++)
-                        _swap.Tiles[x, y].TileId = -1;
+                        // _swap.Tiles[x, y].TileId = -1;
+                        // TileId refactor
+                        _swap.Tiles[x, y].Clear();
             }
 
             // Set dialog result

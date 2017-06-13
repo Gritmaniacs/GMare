@@ -388,7 +388,11 @@ namespace GMare.Objects
                             Blend = GMUtilities.GMColorToColor(tile.BlendColor),
                             // TODO: FlipMode
                             // TileId = tile.Id,
-                            TileId = GMareBrush.PositionToSourceTileId(tile.X, tile.Y, tileBackground.Image.Width, new Size(newRoom.TileWidth, newRoom.TileHeight))
+                            // TileId = GMareBrush.PositionToSourceTileId(tile.X, tile.Y, tileBackground.Image.Width, new Size(newRoom.TileWidth, newRoom.TileHeight))
+                            TileX = tile.X,
+                            TileY = tile.Y,
+                            TileWidth = newRoom.TileWidth,
+                            TileHeight = newRoom.TileHeight
                         };
                     }
 

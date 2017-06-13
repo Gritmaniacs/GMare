@@ -262,7 +262,9 @@ namespace GMare
 
                     // Set textures for loaded objects, update blocks and object names
                     App.SetTextures();
-                    App.Room.UpdateBlockInstances();
+                    // TileId Refactor
+                    // TODO: not needed anymore?
+                    // App.Room.UpdateBlockInstances();
                     App.Room.UpdateInstanceObjectNames();
                     UpdateUI();
                     nudRoomGridX.Value = App.Room.Backgrounds[0].TileWidth;
@@ -1041,6 +1043,12 @@ namespace GMare
                 if (App.Room == null || App.Room.Backgrounds[0] == null || App.Room.Backgrounds[0].Image == null)
                     return;
 
+                // TileId Refactor
+                // TODO: not needed anymore?
+                throw new NotImplementedException();
+
+
+                /*
                 // Create a new background form
                 using (TilesetRefactorForm form = new TilesetRefactorForm())
                 {
@@ -1064,6 +1072,7 @@ namespace GMare
                         UpdateImages(null);
                     }
                 }
+                */
             }
             else if (butBrushTool.Name == name)
             {
