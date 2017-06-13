@@ -110,7 +110,6 @@
             this.pnlBackground = new GMare.Controls.GMareBackgroundPanel();
             this.pnlBackgroundTools = new System.Windows.Forms.Panel();
             this.butBackgroundGrid = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton();
-            this.butReorganizeTiles = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton();
             this.butHighlighter = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton();
             this.butBackgroundEdit = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton();
             this.butBrushTool = new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton();
@@ -1332,7 +1331,7 @@
             // pnlBackground
             // 
             this.pnlBackground.AutoScroll = true;
-            this.pnlBackground.AutoScrollMinSize = new System.Drawing.Size(258, 106);
+            this.pnlBackground.AutoScrollMinSize = new System.Drawing.Size(258, 132);
             this.pnlBackground.AvoidMouseEvents = false;
             this.pnlBackground.BackColor = System.Drawing.Color.White;
             this.pnlBackground.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -1342,11 +1341,11 @@
             this.pnlBackground.Highlighter = null;
             this.pnlBackground.Image = null;
             this.pnlBackground.ImageScale = 1;
-            this.pnlBackground.Location = new System.Drawing.Point(10, 106);
+            this.pnlBackground.Location = new System.Drawing.Point(10, 80);
             this.pnlBackground.Name = "pnlBackground";
             this.pnlBackground.SelectMode = GMare.Controls.GMareBackgroundPanel.SelectType.Normal;
             this.pnlBackground.ShowGrid = false;
-            this.pnlBackground.Size = new System.Drawing.Size(262, 110);
+            this.pnlBackground.Size = new System.Drawing.Size(262, 136);
             this.pnlBackground.SnapSize = new System.Drawing.Size(8, 8);
             this.pnlBackground.TabIndex = 1;
             this.pnlBackground.TileBrush = null;
@@ -1360,7 +1359,6 @@
             // pnlBackgroundTools
             // 
             this.pnlBackgroundTools.Controls.Add(this.butBackgroundGrid);
-            this.pnlBackgroundTools.Controls.Add(this.butReorganizeTiles);
             this.pnlBackgroundTools.Controls.Add(this.butHighlighter);
             this.pnlBackgroundTools.Controls.Add(this.butBackgroundEdit);
             this.pnlBackgroundTools.Controls.Add(this.butBrushTool);
@@ -1373,7 +1371,7 @@
             this.pnlBackgroundTools.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlBackgroundTools.Location = new System.Drawing.Point(10, 49);
             this.pnlBackgroundTools.Name = "pnlBackgroundTools";
-            this.pnlBackgroundTools.Size = new System.Drawing.Size(262, 57);
+            this.pnlBackgroundTools.Size = new System.Drawing.Size(262, 31);
             this.pnlBackgroundTools.TabIndex = 1;
             // 
             // butBackgroundGrid
@@ -1397,28 +1395,6 @@
             this.butBackgroundGrid.UseDropShadow = true;
             this.butBackgroundGrid.UseVisualStyleBackColor = true;
             this.butBackgroundGrid.CheckChanged += new Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton.CheckChangedEventHandler(this.butBackgroundGrid_CheckChanged);
-            // 
-            // butReorganizeTiles
-            // 
-            this.butReorganizeTiles.ButtonType = Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton.ButtonModeType.Button;
-            this.butReorganizeTiles.Checked = false;
-            this.butReorganizeTiles.FlatStyled = false;
-            this.butReorganizeTiles.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.butReorganizeTiles.Image = global::GMare.Properties.Resources.background_reorganize;
-            this.butReorganizeTiles.ImageXOffset = 0;
-            this.butReorganizeTiles.ImageYOffset = 0;
-            this.butReorganizeTiles.Location = new System.Drawing.Point(0, 28);
-            this.butReorganizeTiles.Name = "butReorganizeTiles";
-            this.butReorganizeTiles.PushButtonImage = null;
-            this.butReorganizeTiles.Size = new System.Drawing.Size(24, 24);
-            this.butReorganizeTiles.TabIndex = 16;
-            this.butReorganizeTiles.TextXOffset = 0;
-            this.butReorganizeTiles.TextYOffset = 0;
-            this.butReorganizeTiles.ToolTipText = "Rearrange the background tiles\r\nto create a new background";
-            this.butReorganizeTiles.ToolTipTitle = "Reorganize Tiles";
-            this.butReorganizeTiles.UseDropShadow = true;
-            this.butReorganizeTiles.UseVisualStyleBackColor = true;
-            this.butReorganizeTiles.Click += new System.EventHandler(this.butBackgroundOption_Click);
             // 
             // butHighlighter
             // 
@@ -1562,7 +1538,6 @@
             this.trkBackgroundMagnify.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trkBackgroundMagnify.ToolTipText = "Slide to set the magnification level";
             this.trkBackgroundMagnify.ToolTipTitle = "Background Magnification";
-            this.trkBackgroundMagnify.Value = 1;
             this.trkBackgroundMagnify.ValueChanged += new System.EventHandler(this.trkMagnify_ValueChanged);
             // 
             // butReplace
@@ -2221,7 +2196,6 @@
             this.trkBlockMagnify.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trkBlockMagnify.ToolTipText = "Slide to set the magnification level";
             this.trkBlockMagnify.ToolTipTitle = "Block Magnification";
-            this.trkBlockMagnify.Value = 1;
             this.trkBlockMagnify.ValueChanged += new System.EventHandler(this.trkMagnify_ValueChanged);
             // 
             // pnlBlockEditor
@@ -2597,7 +2571,6 @@
         private System.Windows.Forms.Label lblSize;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem mnuSelectAll;
-        private Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton butReorganizeTiles;
         private Pyxosoft.Windows.Tools.PyxTools.Controls.PyxButton butBackgroundGrid;
         private Pyxosoft.Windows.Tools.PyxTools.Controls.PyxComboBox cbBackgrounds;
     }

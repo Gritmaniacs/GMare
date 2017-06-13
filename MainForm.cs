@@ -1037,43 +1037,6 @@ namespace GMare
                     }
                 }
             }
-            else if (butReorganizeTiles.Name == name)
-            {
-                // If the room or background is empty return
-                if (App.Room == null || App.Room.Backgrounds[0] == null || App.Room.Backgrounds[0].Image == null)
-                    return;
-
-                // TileId Refactor
-                // TODO: not needed anymore?
-                throw new NotImplementedException();
-
-
-                /*
-                // Create a new background form
-                using (TilesetRefactorForm form = new TilesetRefactorForm())
-                {
-                    // If dialog result was Ok
-                    if (form.ShowDialog() == DialogResult.OK && form.Changed)
-                    {
-                        // Room changing
-                        PushHistory();
-
-                        // Set the background
-                        App.Room.Backgrounds[0].Image.Dispose();
-                        App.Room.Backgrounds[0] = form.Background;
-
-                        // Update room tiles based on background changes
-                        foreach (GMareLayer layer in App.Room.Layers)
-                            layer.Replace(form.Targets, form.Replacements, true);
-
-                        // Update images and blocks
-                        App.Room.ReplaceBlockTileIds(form.Targets, form.Replacements);
-                        App.Room.UpdateBlockInstances();
-                        UpdateImages(null);
-                    }
-                }
-                */
-            }
             else if (butBrushTool.Name == name)
             {
                 // Set the tool mode to brush
@@ -2363,8 +2326,7 @@ namespace GMare
 
             // Set UI
             mnuExportImage.Enabled =
-            mnuSaveBackground.Enabled =
-            butReorganizeTiles.Enabled = !(_background.Image == null);
+            mnuSaveBackground.Enabled = !(_background.Image == null);
         }
 
         /// <summary>
