@@ -2001,15 +2001,13 @@ namespace GMare.Controls
                         if (viewport.IntersectsWith(tileRect) == false)
                             continue;
 
-                        // Calculate source point
-                        source = new Point(tile.TileX / tileSize.Width, tile.TileY / tileSize.Height);
-
                         // Scaling values
                         scale = tile.GetScale();
 
                         // Add sprite data
-                        if (source.X < backgroundGridSize.Width && source.Y < backgroundGridSize.Height)
-                            GraphicsManager.DrawTile(GraphicsManager.TileMaps[index][source.X, source.Y], tileRect.X, tileRect.Y, scale.X, scale.Y, 0, tile.Blend);
+                        // if (source.X < backgroundGridSize.Width && source.Y < backgroundGridSize.Height)
+                        // TODO: restore this
+                            GraphicsManager.DrawTile(GraphicsManager.TileMaps[index], tileRect.X, tileRect.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), scale.X, scale.Y, 0, tile.Blend);
 
                         // If highlighting and the brush contains the tile id, add point
                         if (_highlighter != null && _highlighter.Contains(tile))
@@ -2246,14 +2244,10 @@ namespace GMare.Controls
                 {
                     var tile = _brush.Tiles[col, row];
 
-                    // Calculate source point
-                    source = new Point(tile.TileX / tileSize.Width, tile.TileY / tileSize.Height);
-                    position.X = _posX + col * tileSize.Width;
-                    position.Y = _posY + row * tileSize.Height;
-
                     // If within bounds, add tile
-                    if (source.X > -1 && source.X < GraphicsManager.TileMaps[0].GetLength(0) && source.Y > -1 && source.Y < GraphicsManager.TileMaps[0].GetLength(1))
-                        GraphicsManager.DrawTile(GraphicsManager.TileMaps[0][source.X, source.Y], position.X, position.Y, _brush.Tiles[col, row].GetScale().X, _brush.Tiles[col, row].GetScale().Y, 0, _brush.Tiles[col, row].Blend);
+                    // TODO: restore this
+                    // if (source.X > -1 && source.X < GraphicsManager.TileMaps[0].GetLength(0) && source.Y > -1 && source.Y < GraphicsManager.TileMaps[0].GetLength(1))
+                        GraphicsManager.DrawTile(GraphicsManager.TileMaps[0], position.X, position.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), _brush.Tiles[col, row].GetScale().X, _brush.Tiles[col, row].GetScale().Y, 0, _brush.Tiles[col, row].Blend);
                 }
             }
 
@@ -2381,17 +2375,13 @@ namespace GMare.Controls
 
                     var tile = _selection.Tiles[col, row];
 
-                    // Calculate source point
-                    source = new Point(tile.TileX / tileSize.Width, tile.TileY / tileSize.Height);
-                    position.X = _selection.ToTargetRectangle().X + col * tileSize.Width;
-                    position.Y = _selection.ToTargetRectangle().Y + row * tileSize.Height;
-
                     // Scaling values
                     scale = _selection.Tiles[col, row].GetScale();
 
                     // If within bounds, add tile
-                    if (source.X > -1 && source.X < GraphicsManager.TileMaps[0].GetLength(0) && source.Y > -1 && source.Y < GraphicsManager.TileMaps[2].GetLength(1))
-                        GraphicsManager.DrawTile(GraphicsManager.TileMaps[0][source.X, source.Y], position.X, position.Y, scale.X, scale.Y, 0, _selection.Tiles[col, row].Blend);
+                    // TODO: restore this
+                    // if (source.X > -1 && source.X < GraphicsManager.TileMaps[0].GetLength(0) && source.Y > -1 && source.Y < GraphicsManager.TileMaps[2].GetLength(1))
+                        GraphicsManager.DrawTile(GraphicsManager.TileMaps[0], position.X, position.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), scale.X, scale.Y, 0, _selection.Tiles[col, row].Blend);
                 }
             }
 
@@ -2894,9 +2884,9 @@ namespace GMare.Controls
             GraphicsManager.DeleteTilemaps();
 
             // This is so that the bitmap is pre-rendered with "blending effects", instead of using OpenGL
-            GraphicsManager.LoadTileMap(image, _background.TileWidth, _background.TileHeight);
-            GraphicsManager.LoadTileMap(PixelMap.BitmapBrightness(image, brightness), _background.TileWidth, _background.TileHeight);
-            GraphicsManager.LoadTileMap(PixelMap.BitmapTransparency(image, transparency), _background.TileWidth, _background.TileHeight);
+            GraphicsManager.LoadTileMap(image);
+            GraphicsManager.LoadTileMap(PixelMap.BitmapBrightness(image, brightness));
+            GraphicsManager.LoadTileMap(PixelMap.BitmapTransparency(image, transparency));
 
             image.Dispose();
         }

@@ -173,7 +173,7 @@ namespace GMare.Controls
                 _tileBrush = new GMareBrush();
 
             // Reset selection
-            _tileBrush = GMareBrush.RectangleToTileBrush(new Rectangle(Point.Empty, SnapSize), SnapSize.Width, SnapSize);
+            _tileBrush = GMareBrush.RectangleToTileBrush(new Rectangle(Point.Empty, SnapSize), App.SelectedBackground);
 
             // Update
             UpdateBackBuffer();
@@ -240,8 +240,10 @@ namespace GMare.Controls
                     break;
             }
 
+
+
             // Create tiles based on rectangle
-            _tileBrush = GMareBrush.RectangleToTileBrush(_selection, ImageWidthUnscaled, SnapSize);
+            _tileBrush = GMareBrush.RectangleToTileBrush(_selection, App.SelectedBackground);
 
             // Update
             UpdateBackBuffer();
@@ -288,7 +290,7 @@ namespace GMare.Controls
             _selection = rect;
 
             // Create tiles based on rectangle
-            _tileBrush = GMareBrush.RectangleToTileBrush(_selection, ImageWidthUnscaled, SnapSize);
+            _tileBrush = GMareBrush.RectangleToTileBrush(_selection, App.SelectedBackground);
 
             // Update
             UpdateBackBuffer();

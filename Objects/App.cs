@@ -386,13 +386,10 @@ namespace GMare.Objects
                         {
                             BackgroundId = tileBackground != null ? tileBackground.Id : -1,
                             Blend = GMUtilities.GMColorToColor(tile.BlendColor),
-                            // TODO: FlipMode
-                            // TileId = tile.Id,
-                            // TileId = GMareBrush.PositionToSourceTileId(tile.X, tile.Y, tileBackground.Image.Width, new Size(newRoom.TileWidth, newRoom.TileHeight))
                             TileX = tile.X,
                             TileY = tile.Y,
-                            TileWidth = newRoom.TileWidth,
-                            TileHeight = newRoom.TileHeight
+                            TileWidth = tile.Width,
+                            TileHeight = tile.Height
                         };
                     }
 

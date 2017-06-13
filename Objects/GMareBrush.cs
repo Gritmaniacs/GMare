@@ -416,7 +416,8 @@ namespace GMare.Objects
         {
             // TileId Refactor
             // TODO: not needed anymore?
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
+            return string.Empty;
 
             /*
 
@@ -536,7 +537,7 @@ namespace GMare.Objects
         /// <param name="rectangle">The source rectangle to copy tiles from</param>
         /// <param name="width">The width of the source tileset</param>
         /// <returns>A new tile brush</returns>
-        public static GMareBrush RectangleToTileBrush(Rectangle rectangle, int width, Size tileSize)
+        public static GMareBrush RectangleToTileBrush(Rectangle rectangle, GMareBackground background)
         {
             GMareBrush brush = new GMareBrush();
 
@@ -544,9 +545,12 @@ namespace GMare.Objects
             int x = 0;
             int y = 0;
 
+            int colOrigin = rectangle.X / background.TileWidth;
+            int rowOrigin = rectangle.Y / background.TileHeight;
+
             // Calculate columns and rows
-            int cols = rectangle.Width / tileSize.Width;
-            int rows = rectangle.Height / tileSize.Height;
+            int cols = rectangle.Width / background.TileWidth;
+            int rows = rectangle.Height / background.TileHeight;
 
             // Create a new tile id array
             GMareTile[,] tiles = new GMareTile[cols, rows];
@@ -558,15 +562,15 @@ namespace GMare.Objects
                 for (int row = 0; row < rows; row++)
                 {
                     // Calculate tile position.
-                    x = (col * tileSize.Width) + rectangle.X;
-                    y = (row * tileSize.Height) + rectangle.Y;
+                    x = background.OffsetX + (col * background.TileWidth) + (colOrigin * background.SeparationX) + rectangle.X;
+                    y = background.OffsetY + (row * background.TileHeight) + (rowOrigin * background.SeparationY) + rectangle.Y;
 
                     // Create new tile
                     GMareTile tile = new GMareTile();
                     tile.TileX = x;
                     tile.TileY = y;
-                    tile.TileWidth = tileSize.Width;
-                    tile.TileHeight = tileSize.Height;
+                    tile.TileWidth = background.TileWidth;
+                    tile.TileHeight = background.TileHeight;
 
                     // Set tile
                     tiles[col, row] = tile;

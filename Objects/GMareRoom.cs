@@ -2593,6 +2593,14 @@ namespace GMare.Objects
             return new Point(x, y);
         }
 
+        public Bitmap GetTileset()
+        {
+            if (_image == null)
+                return null;
+
+            return _image.ToBitmap();
+        }
+
         /// <summary>
         /// Gets a bitmap condensed by background tile options
         /// </summary>

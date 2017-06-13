@@ -127,22 +127,28 @@ namespace GMare.Graphics
         /// <param name="vertices"></param>
         /// <param name="textureCoordinates"></param>
         /// <param name="color"></param>
-        public Quad(ResTexture texture, PointF position, PointF scale, float angle, Color color)
+        public Quad(ResTexture texture, RectangleF destinationRectangle, RectangleF sourceRectangle, PointF scale, float angle, Color color)
         {
             _textureId = texture.TextureId;
             _color = color;
             
             // Set vertices.
-            _vertices[0] = new PointF(position.X, position.Y);
-            _vertices[1] = new PointF(texture.TextureSize + _vertices[0].X, position.Y);
-            _vertices[2] = new PointF(texture.TextureSize + _vertices[0].X, texture.TextureSize + _vertices[0].Y);
-            _vertices[3] = new PointF(position.X, texture.TextureSize + _vertices[0].Y);
+            _vertices[0] = new PointF(destinationRectangle.X, destinationRectangle.Y);
+            _vertices[1] = new PointF(destinationRectangle.Width + _vertices[0].X, destinationRectangle.Y);
+            _vertices[2] = new PointF(destinationRectangle.Width + _vertices[0].X, destinationRectangle.Height + _vertices[0].Y);
+            _vertices[3] = new PointF(destinationRectangle.X, destinationRectangle.Height + _vertices[0].Y);
+
+            var texCoordX = sourceRectangle.X / texture.Width;
+            var texCoordY = sourceRectangle.Y / texture.Height;
+
+            var texCoordWidth = (sourceRectangle.Width / texture.Width) * scale.X;
+            var texCoordHeight = (sourceRectangle.Height / texture.Height) * scale.Y;
 
             // Set texture coordinates.
-            _textureCoordinates[0] = new PointF(0.0f, 0.0f);
-            _textureCoordinates[1] = new PointF(scale.X, 0.0f);
-            _textureCoordinates[2] = new PointF(scale.X, scale.Y);
-            _textureCoordinates[3] = new PointF(0.0f, scale.Y);
+            _textureCoordinates[0] = new PointF(texCoordX, texCoordY);
+            _textureCoordinates[1] = new PointF(texCoordX + texCoordWidth, texCoordY);
+            _textureCoordinates[2] = new PointF(texCoordX + texCoordWidth, texCoordY + texCoordHeight);
+            _textureCoordinates[3] = new PointF(texCoordX, texCoordY + texCoordHeight);
         }
 
         #endregion
