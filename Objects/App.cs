@@ -39,6 +39,7 @@ using GameMaker.Project;
 using GameMaker.Resource;
 using GMare.Forms;
 using System.Linq;
+using GMare.Graphics;
 
 namespace GMare.Objects
 {
@@ -347,6 +348,23 @@ namespace GMare.Objects
                     newBackground.Image = new Graphics.PixelMap(GMUtilities.GetBitmap(background.Image));
 
                     newRoom.Backgrounds.Add(newBackground);
+
+                    var image = newBackground.GetTileset();
+
+                    // If no image exists, return
+                    if (image != null)
+                    {
+
+                        // Get app setting values
+                        float brightness = App.GetConfigFloat(App.LowerLayerBrightnessAppKey, App.LowerLayerBrightnessAppDefault);
+                        float transparency = App.GetConfigFloat(App.UpperLayerTransparencyAppKey, App.UndoRedoMaximumAppDefault);
+
+                        // This is so that the bitmap is pre-rendered with "blending effects", instead of using OpenGL
+                        GraphicsManager.LoadTileMapSet(newBackground,
+                            image,
+                            PixelMap.BitmapBrightness(image, brightness),
+                            PixelMap.BitmapTransparency(image, transparency));
+                    }
                 }
 
                 var groupedTiles = gameMakerRoom.Tiles.GroupBy(t => t.Depth).ToList();
@@ -380,11 +398,9 @@ namespace GMare.Objects
                         var tileX = tile.BackgroundX / newRoom.TileWidth;
                         var tileY = tile.BackgroundY / newRoom.TileHeight;
 
-                        var tileBackground = newRoom.Backgrounds.FirstOrDefault(b => b.Name == tile.BackgroundName);
-
                         newLayer.Tiles[tileX, tileY] = new GMareTile()
                         {
-                            BackgroundId = tileBackground != null ? tileBackground.Id : -1,
+                            BackgroundName = tile.BackgroundName,
                             Blend = GMUtilities.GMColorToColor(tile.BlendColor),
                             TileX = tile.X,
                             TileY = tile.Y,

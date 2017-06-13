@@ -1239,7 +1239,6 @@
             this.pnlRoomEditor.Name = "pnlRoomEditor";
             this.pnlRoomEditor.Opaque = false;
             this.pnlRoomEditor.Padding = new System.Windows.Forms.Padding(1);
-            this.pnlRoomEditor.SelectedBackground = null;
             this.pnlRoomEditor.SelectedObject = null;
             this.pnlRoomEditor.ShowBlocks = true;
             this.pnlRoomEditor.ShowGrid = true;

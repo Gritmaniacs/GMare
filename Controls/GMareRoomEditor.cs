@@ -71,7 +71,7 @@ namespace GMare.Controls
         public GMareBackground SelectedBackground
         {
             get { return pnlRoom.SelectedBackground; }
-            set { pnlRoom.SelectedBackground = value; }
+            private set { pnlRoom.SelectedBackground = value; }
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace GMare.Controls
                     return;
 
                 // Get selected instance object id
-                GMareObject obj = App.Room.Objects.Find(delegate(GMareObject o) { return o.Resource.Id == SelectedInstances[0].ObjectId; });
+                GMareObject obj = App.Room.Objects.Find(delegate (GMareObject o) { return o.Resource.Id == SelectedInstances[0].ObjectId; });
 
                 // If no object was found or the object's image data does not exist, return
                 if (obj == null || obj.Image == null)
@@ -206,14 +206,6 @@ namespace GMare.Controls
         }
 
         /// <summary>
-        /// Sets the image to use as a texture
-        /// </summary>
-        public Bitmap Image
-        {
-            set { pnlRoom.Image = value; pnlRoom.Invalidate(); }
-        }
-
-        /// <summary>
         /// Gets the actual mouse position
         /// </summary>
         public string MouseActual
@@ -313,7 +305,7 @@ namespace GMare.Controls
         /// </summary>
         public bool Snap
         {
-            get { return pnlRoom.Snap ; }
+            get { return pnlRoom.Snap; }
             set { pnlRoom.Snap = value; }
         }
 
@@ -862,7 +854,7 @@ namespace GMare.Controls
                     // If using the selection tool, delete the selection
                     if (ToolMode == ToolType.Selection)
                         pnlRoom.mnuSelectionDelete_Click(this, EventArgs.Empty);
-                        
+
                     break;
                 case EditType.Objects: pnlRoom.mnuInstanceDelete_Click(this, EventArgs.Empty); break;
             }
@@ -989,6 +981,14 @@ namespace GMare.Controls
         public void RefreshPosition()
         {
             pnlRoom.RefreshPosition();
+        }
+
+        public void SetBackground(GMareBackground background)
+        {
+            SelectedBackground = background;
+
+            pnlRoom.LoadBackground(background);
+            pnlRoom.Invalidate();
         }
 
         #endregion

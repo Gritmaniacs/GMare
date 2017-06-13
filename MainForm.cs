@@ -466,7 +466,7 @@ namespace GMare
                     if (_background != null && _background.Image != null && form.UpdateTextures)
                     {
                         App.SetTextures();
-                        pnlRoomEditor.Image = _background.GetTileset();
+                        pnlRoomEditor.SetBackground(_background);
                     }
 
                     // Trigger magnification update
@@ -2294,8 +2294,7 @@ namespace GMare
             // Update all background UI
             pnlBackground.SnapSize = roomData == null ? App.Room.Backgrounds[0].TileSize : roomData.Room.Backgrounds[0].TileSize;
             pnlBackground.Image = roomData == null ? App.Room.Backgrounds[0].GetCondensedTileset() : roomData.Room.Backgrounds[0].GetCondensedTileset();
-            pnlRoomEditor.SelectedBackground = roomData == null ? App.Room.Backgrounds[0] : roomData.Room.Backgrounds[0];
-            pnlRoomEditor.Image = roomData == null ? App.Room.Backgrounds[0].GetTileset() : roomData.Room.Backgrounds[0].GetTileset();
+            pnlRoomEditor.SetBackground(roomData == null ? App.Room.Backgrounds[0] : roomData.Room.Backgrounds[0]);
             pnlBlockEditor.SelectedBackground = roomData == null ? App.Room.Backgrounds[0] : roomData.Room.Backgrounds[0];
             pnlBlockEditor.Image = roomData == null ? App.Room.Backgrounds[0].GetSegmentedTileset(1) : roomData.Room.Backgrounds[0].GetSegmentedTileset(1);
 
@@ -2320,7 +2319,7 @@ namespace GMare
         private void UpdateBackgrounds()
         {
             _background = App.Room.Backgrounds[0];
-            pnlRoomEditor.SelectedBackground = _background;
+            pnlRoomEditor.SetBackground(_background);
             pnlBlockEditor.SelectedBackground = _background;
             pnlBackground.SnapSize = _background.TileSize;
 
@@ -2453,8 +2452,7 @@ namespace GMare
             // Update all background UI
             pnlBackground.SnapSize = App.SelectedBackground.TileSize;
             pnlBackground.Image = App.SelectedBackground.GetCondensedTileset();
-            pnlRoomEditor.SelectedBackground = App.SelectedBackground;
-            pnlRoomEditor.Image = App.SelectedBackground.GetTileset();
+            pnlRoomEditor.SetBackground(App.SelectedBackground);
             pnlBlockEditor.SelectedBackground = App.SelectedBackground;
             pnlBlockEditor.Image = App.SelectedBackground.GetSegmentedTileset(1);
 

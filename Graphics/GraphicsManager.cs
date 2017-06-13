@@ -28,6 +28,7 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
+using GMare.Objects;
 
 namespace GMare.Graphics
 {
@@ -49,7 +50,7 @@ namespace GMare.Graphics
         };
         private static readonly Stack<Line> _lines = new Stack<Line>();                           // A list of drawing lines.
         private static List<Quad> _quads = new List<Quad>();                                      // A list of drawing quads.
-        private static List<ResTexture> _tileMaps = new List<ResTexture>();                 // Room's tiles.
+        private static Dictionary<string, Tuple<ResTexture, ResTexture, ResTexture>> _tileMaps = new Dictionary<string, Tuple<ResTexture, ResTexture, ResTexture>>();                 // Room's tiles.
         private static GraphicsCanvas _canvas = null;                                             // Rendering canvas.
         private static Dictionary<int, ResTexture> _sprites = new Dictionary<int, ResTexture>();  // A dictionary of sprites.
         private static BlendType _blendMode = BlendType.Alpha;                                    // Renderer's blend mode.
@@ -129,7 +130,7 @@ namespace GMare.Graphics
         /// <summary>
         /// Gets the rendering tile maps.
         /// </summary>
-        public static List<ResTexture> TileMaps
+        public static Dictionary<string, Tuple<ResTexture, ResTexture, ResTexture>> TileMaps
         {
             get { return _tileMaps; }
         }
@@ -666,8 +667,12 @@ namespace GMare.Graphics
                 return;
 
             // Iterate through textures, and dispose of them
-            for (int i = 0; i < _tileMaps.Count; i++)
-                _tileMaps[i].Dispose();
+            foreach (var entry in _tileMaps)
+            {
+                entry.Value.Item1.Dispose();
+                entry.Value.Item2.Dispose();
+                entry.Value.Item3.Dispose();
+            }
 
             // Clear elements
             _tileMaps.Clear();
@@ -677,13 +682,17 @@ namespace GMare.Graphics
         /// Loads a tile map from a bitmap
         /// </summary>
         /// <param name="bitmap">The bitmap to create a tile map from.</param>
-        public static void LoadTileMap(Bitmap image)
+        public static void LoadTileMapSet(GMareBackground background, Bitmap image, Bitmap brightnessImage, Bitmap transparencyImage)
         {
-            // Create a new texture grid
-            ResTexture map = new ResTexture(image);
-            
+            if (_tileMaps.ContainsKey(background.Name))
+            {
+                _tileMaps[background.Name].Item1.Dispose();
+                _tileMaps[background.Name].Item2.Dispose();
+                _tileMaps[background.Name].Item3.Dispose();
+            }
+
             // Add tile map
-            _tileMaps.Add(map);
+            _tileMaps[background.Name] = new Tuple<ResTexture, ResTexture, ResTexture>(new ResTexture(image), new ResTexture(brightnessImage), new ResTexture(transparencyImage));
         }
 
         #endregion

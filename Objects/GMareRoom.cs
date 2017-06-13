@@ -2743,7 +2743,7 @@ namespace GMare.Objects
 
         private Color _blend = Color.White;      // The blend color
         private FlipType _flip = FlipType.None;  // Flip mode
-        private int _backgroundId = -1;          // Background id used for this tile
+        private string _backgroundName = string.Empty;
 
         private int _tileX = 0;
         private int _tileY = 0;
@@ -2799,13 +2799,10 @@ namespace GMare.Objects
             set { _tileHeight = value; }
         }
 
-        /// <summary>
-        /// Gets or sets the background id to copy from
-        /// </summary>
-        public int BackgroundId
+        public string BackgroundName
         {
-            get { return _backgroundId; }
-            set { _backgroundId = value; }
+            get { return _backgroundName; }
+            set { _backgroundName = value; }
         }
 
         /// <summary>
@@ -2950,6 +2947,7 @@ namespace GMare.Objects
             }
 
             return 
+                this.BackgroundName == other.BackgroundName &&
                 this.TileX == other.TileX &&
                 this.TileY == other.TileY &&
                 this.TileWidth == other.TileWidth &&

@@ -230,21 +230,6 @@ namespace GMare.Controls
         }
 
         /// <summary>
-        /// The image to use as a texture
-        /// </summary>
-        public Bitmap Image
-        {
-            set
-            {
-                // Set the background width as per the condensed image
-                _backgroundWidth = value == null ? 0 : value.Width;
-
-                // Load texture into video RAM, delete image
-                LoadTexture(value);
-            }
-        }
-
-        /// <summary>
         /// Gets the actual mouse position
         /// </summary>
         public Point MouseLocation
@@ -2004,10 +1989,26 @@ namespace GMare.Controls
                         // Scaling values
                         scale = tile.GetScale();
 
+                        var selectedTilemap = GraphicsManager.TileMaps[tile.BackgroundName].Item1;
+
+                        switch (index)
+                        {
+                            default:
+                            case 0:
+                                selectedTilemap = GraphicsManager.TileMaps[tile.BackgroundName].Item1;
+                                break;
+                            case 1:
+                                selectedTilemap = GraphicsManager.TileMaps[tile.BackgroundName].Item2;
+                                break;
+                            case 2:
+                                selectedTilemap = GraphicsManager.TileMaps[tile.BackgroundName].Item3;
+                                break;
+                        }
+
                         // Add sprite data
                         // if (source.X < backgroundGridSize.Width && source.Y < backgroundGridSize.Height)
                         // TODO: restore this
-                            GraphicsManager.DrawTile(GraphicsManager.TileMaps[index], tileRect.X, tileRect.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), scale.X, scale.Y, 0, tile.Blend);
+                        GraphicsManager.DrawTile(selectedTilemap, tileRect.X, tileRect.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), scale.X, scale.Y, 0, tile.Blend);
 
                         // If highlighting and the brush contains the tile id, add point
                         if (_highlighter != null && _highlighter.Contains(tile))
@@ -2247,7 +2248,7 @@ namespace GMare.Controls
                     // If within bounds, add tile
                     // TODO: restore this
                     // if (source.X > -1 && source.X < GraphicsManager.TileMaps[0].GetLength(0) && source.Y > -1 && source.Y < GraphicsManager.TileMaps[0].GetLength(1))
-                        GraphicsManager.DrawTile(GraphicsManager.TileMaps[0], position.X, position.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), _brush.Tiles[col, row].GetScale().X, _brush.Tiles[col, row].GetScale().Y, 0, _brush.Tiles[col, row].Blend);
+                        GraphicsManager.DrawTile(GraphicsManager.TileMaps[_background.Name].Item1, position.X, position.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), _brush.Tiles[col, row].GetScale().X, _brush.Tiles[col, row].GetScale().Y, 0, _brush.Tiles[col, row].Blend);
                 }
             }
 
@@ -2381,7 +2382,7 @@ namespace GMare.Controls
                     // If within bounds, add tile
                     // TODO: restore this
                     // if (source.X > -1 && source.X < GraphicsManager.TileMaps[0].GetLength(0) && source.Y > -1 && source.Y < GraphicsManager.TileMaps[2].GetLength(1))
-                        GraphicsManager.DrawTile(GraphicsManager.TileMaps[0], position.X, position.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), scale.X, scale.Y, 0, _selection.Tiles[col, row].Blend);
+                        GraphicsManager.DrawTile(GraphicsManager.TileMaps[_background.Name].Item1, position.X, position.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), scale.X, scale.Y, 0, _selection.Tiles[col, row].Blend);
                 }
             }
 
@@ -2861,8 +2862,11 @@ namespace GMare.Controls
         /// <summary>
         /// Loads a texture from a bitmap
         /// </summary>
-        private void LoadTexture(Bitmap image)
+        public void LoadBackground(GMareBackground background)
         {
+            var image = background.GetTileset();
+            _backgroundWidth = image == null ? 0 : image.Width;
+
             // If no image exists, return
             if (image == null || App.Room == null)
             {
@@ -2880,13 +2884,11 @@ namespace GMare.Controls
             float brightness = App.GetConfigFloat(App.LowerLayerBrightnessAppKey, App.LowerLayerBrightnessAppDefault);
             float transparency = App.GetConfigFloat(App.UpperLayerTransparencyAppKey, App.UndoRedoMaximumAppDefault);
 
-            // Delete any previous tilemaps
-            GraphicsManager.DeleteTilemaps();
-
             // This is so that the bitmap is pre-rendered with "blending effects", instead of using OpenGL
-            GraphicsManager.LoadTileMap(image);
-            GraphicsManager.LoadTileMap(PixelMap.BitmapBrightness(image, brightness));
-            GraphicsManager.LoadTileMap(PixelMap.BitmapTransparency(image, transparency));
+            GraphicsManager.LoadTileMapSet(background,
+                image,
+                PixelMap.BitmapBrightness(image, brightness),
+                PixelMap.BitmapTransparency(image, transparency));
 
             image.Dispose();
         }

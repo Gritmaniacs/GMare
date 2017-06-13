@@ -571,6 +571,7 @@ namespace GMare.Objects
                     tile.TileY = y;
                     tile.TileWidth = background.TileWidth;
                     tile.TileHeight = background.TileHeight;
+                    tile.BackgroundName = background.Name;
 
                     // Set tile
                     tiles[col, row] = tile;
