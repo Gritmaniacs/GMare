@@ -158,7 +158,7 @@ namespace GameMaker.Resource
                 root.Tag = assets;
                 return root;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw new Exception("There was a problem reading the project file. The project file may be corrupt, or it may be an updated version that isn't supported.");
             }

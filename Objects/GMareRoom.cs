@@ -2618,8 +2618,8 @@ namespace GMare.Objects
 
             // Calculate row and column amounts
             Size grid = GetGridSize();
-            int cols = grid.Width;
-            int rows = grid.Height;
+            int cols = grid.Width > 0 ? grid.Width : 1;
+            int rows = grid.Height > 0 ? grid.Height : 1;
             int width = cols * tileSize.Width;
             int height = rows * tileSize.Height;
 
@@ -2637,11 +2637,12 @@ namespace GMare.Objects
                     Rectangle source = new Rectangle();
                     source.X = (int)(double)(col * tileSize.Width + col * separation.Width) + offset.Width;
                     source.Y = (int)(double)(row * tileSize.Height + row * separation.Height) + offset.Height;
-                    source.Width = tileSize.Width;
-                    source.Height = tileSize.Height;
+                    source.Width = tileSize.Width > _image.Width ? _image.Width : tileSize.Width;
+                    source.Height = tileSize.Height > _image.Height ? _image.Height : tileSize.Height;
 
                     // Draw tile to condensed bitmap
-                    gfx.DrawImageUnscaled(image.Clone(source, image.PixelFormat), col * tileSize.Width, row * tileSize.Height);
+                    var clonedImage = image.Clone(source, image.PixelFormat);
+                    gfx.DrawImageUnscaled(clonedImage, col * tileSize.Width, row * tileSize.Height);
                 }
             }
 

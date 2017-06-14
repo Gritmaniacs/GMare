@@ -317,7 +317,7 @@ namespace GMare.Objects
                 var project = new GMProject();
                 project.ReadProject(file);
 
-                var gameMakerRoom = project.Rooms[5];
+                var gameMakerRoom = project.Rooms[3];
 
                 var newRoom = new GMareRoom();
                 // TODO: room ID
@@ -334,6 +334,9 @@ namespace GMare.Objects
 
                 foreach (var background in project.Backgrounds)
                 {
+                    if (!background.UseAsTileSet)
+                        continue;
+
                     var newBackground = new GMareBackground();
                     // TODO
                     // newBackground.Id = background.Id;
@@ -706,18 +709,6 @@ namespace GMare.Objects
             // If the room is empty return
             if (room == null)
                 return;
-
-            // Correct values for versions under 1.0.0.14
-            if (VersionCompare(room.Version, "1.0.0.14") == VersionResultType.Less)
-            {
-                // Set instance color blend to white
-                foreach (GMareInstance instance in room.Instances)
-                    instance.UBlendColor = 4294967295;
-
-                // Set width and height based on old column and row values
-                room.Width = room.Backgrounds.Count == 0 ? 16 : room.Columns * room.Backgrounds[0].TileWidth;
-                room.Height = room.Backgrounds.Count == 0 ? 16 : room.Rows * room.Backgrounds[0].TileHeight;
-            }
         }
 
         [DllImport("user32.dll")]
