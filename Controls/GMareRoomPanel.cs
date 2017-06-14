@@ -2245,10 +2245,13 @@ namespace GMare.Controls
                 {
                     var tile = _brush.Tiles[col, row];
 
+                    position.X = _posX + col * tileSize.Width;
+                    position.Y = _posY + row * tileSize.Height;
+
                     // If within bounds, add tile
                     // TODO: restore this
                     // if (source.X > -1 && source.X < GraphicsManager.TileMaps[0].GetLength(0) && source.Y > -1 && source.Y < GraphicsManager.TileMaps[0].GetLength(1))
-                        GraphicsManager.DrawTile(GraphicsManager.TileMaps[_background.Name].Item1, position.X, position.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), _brush.Tiles[col, row].GetScale().X, _brush.Tiles[col, row].GetScale().Y, 0, _brush.Tiles[col, row].Blend);
+                    GraphicsManager.DrawTile(GraphicsManager.TileMaps[_background.Name].Item1, position.X, position.Y, new Rectangle(tile.TileX, tile.TileY, tile.TileWidth, tile.TileHeight), _brush.Tiles[col, row].GetScale().X, _brush.Tiles[col, row].GetScale().Y, 0, _brush.Tiles[col, row].Blend);
                 }
             }
 
